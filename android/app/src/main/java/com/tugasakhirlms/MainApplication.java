@@ -21,13 +21,6 @@ public class MainApplication extends Application implements ReactApplication {
         }
         @Override
         protected List<ReactPackage> getPackages() {
-         return Arrays.asList(
-            new MainReactPackage(),
-            new ReactVideoPackage()
-    );
-}
-        @Override
-        protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
         
