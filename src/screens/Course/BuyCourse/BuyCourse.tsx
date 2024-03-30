@@ -11,13 +11,13 @@ const BuyCourse = ({route, navigation}: ScreenProps<'BuyCourse'>) => {
   const [text, setText] = useState<string>('');
 
   const applyCoupon = () => {
-    if (coupon !== route.params.coupon) {
+    if (coupon !== route?.params?.coupon) {
       setText('Kupon salah');
     }
     setText('Kupon Benar');
   };  
   return (
-    <View className='p-2'>
+    <View className='p-2 flex-1'>
        <CustomRoute onPress={() => navigation.goBack()} text="Checkout" />
       <Text className='text-black font-bold'>Select Payment</Text>
       {dummyCheckout.map((list) => (
@@ -33,8 +33,10 @@ const BuyCourse = ({route, navigation}: ScreenProps<'BuyCourse'>) => {
       ))}
       <View className="flex justify-between relative pt-1">
         <TextInput
-          className="border rounded-lg text-xs"
+          className="border rounded-lg text-xs text-black"
           placeholder="take your coupon here..."
+          placeholderTextColor={'gray'}
+          
           value={coupon}
           onChangeText={setCoupon}
         />
@@ -44,7 +46,20 @@ const BuyCourse = ({route, navigation}: ScreenProps<'BuyCourse'>) => {
       </View>
       <View className="flex flex-row items-center p-2 my-2 justify-between border rounded-lg">
         <Text className="text-black font-bold">Total</Text>
-        <Text className="text-black font-bold ">{makeRupiahValue(route.params.price)}</Text>
+        <Text className="text-black font-bold ">{makeRupiahValue(route?.params?.price ?? 0)}</Text>
+      </View>
+      <View className="absolute bottom-0 w-full p-4 ">
+        <Pressable
+          onPress={() =>
+            navigation.navigate('BuyCourse', {
+              id: '',
+              coupon: 'LETSROCK',
+              price: 200000,
+            })
+          }
+          className=" bg-primary-50 rounded-lg">
+          <Text className="text-center p-2 text-white">Confirm</Text>
+        </Pressable>
       </View>
     </View>
   );

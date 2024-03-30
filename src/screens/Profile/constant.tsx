@@ -31,11 +31,6 @@ export const arrayList: ListType[] = [
     icon: <HistoryIcon />,
   },
   {
-    name: 'Help Center',
-    route: 'Help',
-    icon: <HelpIcon />,
-  },
-  {
     name: 'Logout',
     route: 'Logout',
     icon: <LogoutIcon />,

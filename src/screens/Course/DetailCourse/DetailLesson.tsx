@@ -8,25 +8,25 @@ import {makeRupiahValue} from '../../../helper/formatter';
 
 const DetailLesson = ({route, navigation}: ScreenProps<'DetailLesson'>) => {
   return (
-    <ScrollView contentContainerStyle={{flexGrow: 1}}>
+    <ScrollView contentContainerStyle={{flexGrow: 1}} className='p-5'>
       <CustomRoute onPress={() => navigation.goBack()} text="Course Detail" />
-      <Image source={require('../../../assets/courselong.png')} />
+      <Image source={require('../../../assets/courselong.png')} className='w-full rounded-xl' />
       <Text className="text-black font-bold">{dummy.name}</Text>
       <View className="flex flex-row justify-between">
         <View className="flex-row">
           <StarIcon />
-          <Text>{dummy.rating}</Text>
+          <Text className='text-black'>{dummy.rating}</Text>
         </View>
         <Text className="text-primary-50">{makeRupiahValue(dummy.price)}</Text>
       </View>
-      <View className="flex flex-row justify-between gap-2 px-2 mr-2">
+      <View className="flex flex-row justify-between gap-2 pt-4 px-2 mr-2">
         <Pressable
           onPress={() => navigation.navigate('DetailCourse', {id: ''})}
           className={`rounded-lg border border-primary-50 w-1/2 ${
             route.name !== 'DetailLesson' ? 'bg-primary-50' : ''
           }`}>
           <Text
-            className={`text-center ${
+            className={`text-center p-2 ${
               route.name !== 'DetailLesson' ? 'text-white' : 'text-primary-50'
             }`}>
             Overview
@@ -38,7 +38,7 @@ const DetailLesson = ({route, navigation}: ScreenProps<'DetailLesson'>) => {
             route.name === 'DetailLesson' ? 'bg-primary-50' : ''
           }`}>
           <Text
-            className={`text-center  ${
+            className={`text-center p-2  ${
               route.name === 'DetailLesson' ? 'text-white' : 'text-primary-50'
             }`}>
             Lessons
@@ -48,11 +48,24 @@ const DetailLesson = ({route, navigation}: ScreenProps<'DetailLesson'>) => {
       <View>
         {arrDummyLesson.map((list, index) => (
           <Text
-            className="font-bold border rounded-lg text-black my-2"
+            className="font-bold border rounded-lg p-2 mx-2 text-black my-2"
             key={index}>
             {list}
           </Text>
         ))}
+      </View>
+      <View className="absolute bottom-0 w-full p-4 ">
+        <Pressable
+          onPress={() =>
+            navigation.navigate('BuyCourse', {
+              id: '',
+              coupon: 'LETSROCK',
+              price: 200000,
+            })
+          }
+          className=" bg-primary-50 rounded-lg">
+          <Text className="text-center p-2 text-white">Buy Now</Text>
+        </Pressable>
       </View>
     </ScrollView>
   );

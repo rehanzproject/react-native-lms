@@ -12,14 +12,14 @@ function Profile({route, navigation}: ScreenProps<'Profile'>) {
   }
   
   return (
-    <View>
+    <View className='flex-1'>
       <CustomRoute onPress={() => navigation.goBack()} text={route.name} />
-      <View className="flex items-center">
+      <View className="flex items-center ">
         <Image
           source={require('../../assets/photo.png')}
           className="flex justify-center items-center"
         />
-        <Text className="font-bold text-lg text-black">Saya Cupu</Text>
+        <Text className="font-bold text-lg text-black">Chandra Lion</Text>
         {arrayList.map((list) => (
           <View key={list.name} className="flex justify-center w-3/4">
             <TouchableOpacity
@@ -28,11 +28,11 @@ function Profile({route, navigation}: ScreenProps<'Profile'>) {
                 list.route === 'Logout' && 'bg-danger-50'
               }`}
               onPress={() => list.route === 'Logout' ?  handleLogout() : navigation.navigate(list.route)}>
-              <View className="flex-1 mt-1">{list.icon}</View>
+              <View className="flex-1">{list.icon}</View>
               <Text
                 className={`${
                   list.name === 'Logout' ? 'text-white' : 'text-primary-50'
-                } px-8 `}>
+                } px-8 pb-2`}>
                 {' '}
                 {list.name}
               </Text>

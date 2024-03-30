@@ -8,25 +8,25 @@ import {makeRupiahValue} from '../../../helper/formatter';
 
 const DetailCourse = ({route, navigation}: ScreenProps<'DetailCourse'>) => {
   return (
-    <ScrollView contentContainerStyle={{flexGrow: 1}}>
+    <ScrollView contentContainerStyle={{flexGrow: 1}} className='p-5'>
       <CustomRoute onPress={() => navigation.goBack()} text="Course Detail" />
-      <Image source={require('../../../assets/courselong.png')} />
+      <Image source={require('../../../assets/courselong.png')} className='w-full rounded-xl' />
       <Text className="text-black font-bold">{dummy.name}</Text>
       <View className="flex flex-row justify-between">
         <View className="flex-row">
           <StarIcon />
-          <Text>{dummy.rating}</Text>
+          <Text className='text-black'>{dummy.rating}</Text>
         </View>
         <Text className="text-primary-50">{makeRupiahValue(dummy.price)}</Text>
       </View>
-      <View className="flex flex-row justify-between gap-2 px-2 mr-2">
+      <View className="flex flex-row justify-between gap-2 pt-4 px-2 mr-2">
         <Pressable
           onPress={() => navigation.navigate('DetailCourse')}
           className={`rounded-lg border border-primary-50 w-1/2 ${
             route.name === 'DetailCourse' ? 'bg-primary-50' : ''
           }`}>
           <Text
-            className={`text-center ${
+            className={`text-center p-2 ${
               route.name === 'DetailCourse' ? 'text-white' : 'text-primary-50'
             }`}>
             Overview
@@ -38,7 +38,7 @@ const DetailCourse = ({route, navigation}: ScreenProps<'DetailCourse'>) => {
             route.name !== 'DetailCourse' ? 'bg-primary-50' : ''
           }`}>
           <Text
-            className={`text-center  ${
+            className={`text-center p-2 ${
               route.name !== 'DetailCourse' ? 'text-white' : 'text-primary-50'
             }`}>
             Lessons
@@ -47,7 +47,7 @@ const DetailCourse = ({route, navigation}: ScreenProps<'DetailCourse'>) => {
       </View>
       <Text className="text-black font-bold text-sm">Description</Text>
       <Text className="text-xs text-black">{dummy.description}</Text>
-      <View className="fixed bottom-4 w-full px-4">
+      <View className="absolute bottom-0 w-full p-4 ">
         <Pressable
           onPress={() =>
             navigation.navigate('BuyCourse', {
@@ -57,7 +57,7 @@ const DetailCourse = ({route, navigation}: ScreenProps<'DetailCourse'>) => {
             })
           }
           className=" bg-primary-50 rounded-lg">
-          <Text className="text-center text-white">Buy Now</Text>
+          <Text className="text-center p-2 text-white">Buy Now</Text>
         </Pressable>
       </View>
     </ScrollView>

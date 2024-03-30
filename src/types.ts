@@ -1,4 +1,4 @@
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {NativeStackNavigationProp, NativeStackScreenProps} from '@react-navigation/native-stack';
 import {ReactNode} from 'react';
 
 export type RootStackParamList = {
@@ -44,3 +44,13 @@ export interface EditType {
   phone: string;
   confirmPassword: string;
 }
+export interface IDataCourse {
+  data: DataCourse[];
+  navigation: NativeStackNavigationProp<RootStackParamList, "Home", undefined>
+}
+type DataCourse = {
+  name: string;
+  price: number;
+  image: string;
+  rating: number;
+};

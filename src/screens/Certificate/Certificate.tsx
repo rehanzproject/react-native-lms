@@ -16,10 +16,13 @@ const Certificate = ({navigation}: ScreenProps<'Certificate'>) => {
             source={require('../../assets/course.png')}
             className="object-cover object-center w-20 h-20 rounded-md m-2  aspect-auto"
           />
-          <View className="flex flex-col justify-between">
+          <View className="flex">
+            <View className=' flex flex-row justify-between'>
+
             <Text className="text-xs text-black font-bold">{list.name}</Text>
             <Text className="text-success-50">Completed</Text>
-            <View>
+            </View>
+            <View className='flex justify-center items-center p-2'>
               <Pressable className="bg-primary-50 rounded-lg">
                 <Text className="text-white text-center">See Certificate</Text>
               </Pressable>
