@@ -2,21 +2,21 @@ export const dummyCheckout = [
   {
     name: 'Gopay',
     payment_method: 'Gopay',
-    icon: '',
+    icon: require('../../../assets/gopay.png'),
   },
   {
     name: 'Dana',
     payment_method: 'Dana',
-    icon: '',
+    icon: require('../../../assets/dana.png'),
   },
   {
     name: 'LinkAja',
     payment_method: 'LinkAja',
-    icon: '',
+    icon: require('../../../assets/linkaja.png'),
   },
   {
     name: 'Paypal',
     payment_method: 'Paypal',
-    icon: '',
+    icon: require('../../../assets/paypal.png'),
   },
 ];

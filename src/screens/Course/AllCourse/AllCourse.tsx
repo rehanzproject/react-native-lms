@@ -12,6 +12,7 @@ import CustomRoute from '../../../components/atoms/CustomRoute/CustomRoute.atom'
 import {dummyArray} from './constant';
 import StarIcon from '../../../components/atoms/Icons/StarIcon';
 import SearchIcon from '../../../components/atoms/Icons/SearchIcon';
+import {makeRupiahValue} from '../../../helper/formatter';
 
 const AllCourse = ({navigation, route}: ScreenProps<'AllCourse'>) => {
   return (
@@ -19,12 +20,13 @@ const AllCourse = ({navigation, route}: ScreenProps<'AllCourse'>) => {
       <View className="">
         <CustomRoute onPress={() => navigation.goBack()} text="Category" />
         <View className="flex relative">
-        <View className='absolute p-5'>
-          <SearchIcon />
-        </View>
+          <View className="absolute p-5">
+            <SearchIcon />
+          </View>
           <TextInput
-            placeholder="Search"
-            className="border px-10 mx-2 rounded-lg my-2"
+            placeholder={route.params?.search}
+            className="border text-black px-10 mx-2 rounded-lg my-2 "
+            placeholderTextColor={'gray'}
           />
         </View>
 
@@ -33,15 +35,24 @@ const AllCourse = ({navigation, route}: ScreenProps<'AllCourse'>) => {
             <TouchableOpacity
               key={list.name}
               onPress={() => navigation.navigate('DetailCourse', {id: ''})}
-              className="shadow-sm rounded-xl grid grid-cols-2 w-1/2 gap-1 px-2">
-              <Image source={require('../../../assets/course.png')} />
-              <Text className="text-black">{list.name}</Text>
-              <View className="flex flex-row justify-between">
-                <View className='flex flex-row'>
+              className="shadow-md rounded-xl grid grid-cols-2 m-2 mx-4 border-secondary-50/50 border">
+              <Image
+                source={list.image}
+                className="w-full"
+                resizeMode="stretch"
+              />
+              <Text className="text-black text-base pl-1 font-bold">{list.name}</Text>
+              <View className="flex flex-row justify-between pt-5">
+                <View className="flex flex-row">
                   <StarIcon />
-                  <Text>{list.rating}</Text>
+                  <Text className="text-black pt-1 text-sm">
+                    {' '}
+                    {list.rating}
+                  </Text>
                 </View>
-                <Text className="text-primary-50 ">{list.price}</Text>
+                <Text className="text-primary-50 text-base font-bold px-2">
+                  {makeRupiahValue(list.price)}
+                </Text>
               </View>
             </TouchableOpacity>
           ))}

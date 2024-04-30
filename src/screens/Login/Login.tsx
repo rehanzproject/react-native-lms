@@ -12,6 +12,7 @@ import {Formik} from 'formik';
 import {useHTTP} from '../../hooks/useHTTP';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {LoginSchema} from './constant';
+import HandIcon from '../../components/atoms/Icons/HandIcon';
 
 function Login({navigation}: ScreenProps<'Login'>) {
   const {loginRequest} = useHTTP();
@@ -32,44 +33,52 @@ function Login({navigation}: ScreenProps<'Login'>) {
       validationSchema={LoginSchema}
       onSubmit={(values) => onSubmit(values)}>
       {({errors, handleChange, handleBlur, handleSubmit, values}) => (
-        <View>
+        <View className="flex-1 justify-center">
           <View className="p-8">
-            <Text className="text-2xl text-black font-bold pb-8">
-              Hello There
-            </Text>
-            <Text>Email:</Text>
+            <View className="flex flex-row">
+              <Text className="text-2xl text-black font-bold pb-8">
+                Hello There
+              </Text>
+              <HandIcon />
+            </View>
+
+            <Text className="text-black text-xl">Email:</Text>
             <TextInput
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
               value={values.email}
               placeholder="email"
-              className="border rounded-lg"
+              className="border rounded-lg text-black"
             />
-            <Text>{errors.email}</Text>
-            <Text>Password :</Text>
+            <Text className="text-black">{errors.email}</Text>
+            <Text className="text-black text-xl">Password :</Text>
             <TextInput
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}
               value={values.password}
               secureTextEntry
-              className="border rounded-lg"
+              
+              className="border rounded-lg text-black"
             />
-            <Text>{errors.password}</Text>
-            <TouchableOpacity className="font-bold text-lg">
-              <Text>Forgot Password?</Text>
+            <Text className="text-black">{errors.password}</Text>
+         <View className='pt-16'>
+         <TouchableOpacity className="pb-5" onPress={()=>navigation.navigate('ForgotPassword')}>
+              <Text className='text-black mx-auto text-xl font-bold'>Forgot Password?</Text>
             </TouchableOpacity>
             <Pressable
               onPress={() => handleSubmit()}
               className="rounded-lg bg-primary-50 mt-8 py-2 mb-2">
-              <Text className="text-center text-white text-xs">Sign In</Text>
+              <Text className="text-center text-white text-lg">Sign In</Text>
             </Pressable>
             <Pressable
               onPress={() => navigation.navigate('Register')}
               className="rounded-lg border py-2">
-              <Text className="text-center text-xs text-primary-50">
+              <Text className="text-center text-lg text-primary-50">
                 Didn't have an account , Sign Up
               </Text>
             </Pressable>
+         </View>
+          
           </View>
         </View>
       )}

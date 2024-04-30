@@ -26,6 +26,7 @@ import Certificate from '../screens/Certificate/Certificate';
 import AllCourse from '../screens/Course/AllCourse/AllCourse';
 import DetailLesson from '../screens/Course/DetailCourse/DetailLesson';
 import Help from '../screens/Help/Help';
+import Search from '../screens/Search/Search';
 
 function TabBar() {
   const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -68,6 +69,8 @@ function RootRouter(): JSX.Element {
         <Stack.Screen name="Quiz" component={Quiz} />
         <Stack.Screen name="FinalTask" component={FinalTask} />
         <Stack.Screen name="CategoryCourse" component={CategoryCourse} />
+        <Stack.Screen name="Search" component={Search} />
+       
       </Stack.Navigator>
     </NavigationContainer>
   );

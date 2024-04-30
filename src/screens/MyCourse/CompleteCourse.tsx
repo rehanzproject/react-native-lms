@@ -26,20 +26,20 @@ export default function CompleteCourse({
         {dummyCourseProgress.map((list) => (
           <View
             key={list.name}
-            className="flex flex-row border rounded-lg my-2">
+            className="flex flex-row border rounded-lg mt-2">
             <Image
               source={require('../../assets/course.png')}
               className="object-cover object-center w-20 h-20 rounded-md m-2 aspect-auto"
             />
-            <View className="flex flex-col justify-">
+            <View className="flex flex-col justify-evenly w-60">
               <Text className="text-xs text-black font-bold">{list.name}</Text>
-              <View className=" flex flex-row pt-4 justify-between">
+              <View className="flex flex-row pt-4 justify-between">
                 <Text className="text-xs text-black">
                   {list.total} / {list.total} lessons
                 </Text>
-                <Text className="text-xs font-bold text-black">Completed</Text>
+                <Text className="font-bold text-black">Complete</Text>
               </View>
-              <Pressable className="bg-primary-50 rounded-lg flex justify-center">
+              <Pressable className="bg-primary-50 rounded-lg flex justify-center py-2 mx-8">
                 <Text className="text-center text-xs text-white">
                   Get Certificate
                 </Text>

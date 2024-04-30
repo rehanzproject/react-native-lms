@@ -16,8 +16,12 @@ import {arrDummyHome} from './constant';
 import CarouselCustom from './CarouselCustom';
 import BellIcon from '../../components/atoms/Icons/BellIcon';
 import SearchIcon from '../../components/atoms/Icons/SearchIcon';
+import CustomSwiper from './CustomSwiper';
 function Home({route, navigation}: ScreenProps<'Home'>) {
   const width = Dimensions.get('window').width;
+  const getSearchData = () => {
+
+  }
   return (
     <View className="flex-1 p-4">
       <View className="flex flex-row justify-between">
@@ -32,24 +36,22 @@ function Home({route, navigation}: ScreenProps<'Home'>) {
         </View>
       </View>
       <View className="flex flex-row items-center pt-10">
-        <View className='pb-8 pl-2'>
-
-        <SearchIcon />
+        <View className="pb-8 pl-2">
+          <SearchIcon />
         </View>
         <TextInput
-         
-          placeholder='Search'
+          placeholder="Search"
           placeholderTextColor={'gray'}
+          onPressIn={() => navigation.navigate('Search')}
           className="border rounded-lg w-3/4 text-black absolute py-1 px-8"
         />
-
       </View>
-      
+
       <View className="block flex-row justify-between">
-          <Text className="text-black font-bold text-lg">Popular Course</Text>
-          <Text className="text-primary-50">See All</Text>
-        </View>
-        <CarouselCustom data={arrDummyHome} navigation={navigation} />
+        <Text className="text-black font-bold text-lg">Popular Course</Text>
+        <Text className="text-primary-50">See All</Text>
+      </View>
+      <CustomSwiper data={arrDummyHome} navigation={navigation} />
     </View>
   );
 }

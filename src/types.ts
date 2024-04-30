@@ -22,8 +22,9 @@ export type RootStackParamList = {
   Quiz: undefined;
   FinalTask: undefined;
   CategoryCourse: undefined;
-  AllCourse: undefined;
+  AllCourse: undefined | {search: string};
   DetailLesson: undefined;
+  Search: undefined;
   DetailCourse: undefined | {id: string};
   BuyCourse: undefined | {id: string; price: number; coupon: string};
   // Define other screens if you have them

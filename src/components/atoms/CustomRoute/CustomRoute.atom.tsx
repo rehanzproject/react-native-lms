@@ -6,7 +6,7 @@ export default function CustomRoute({
   text,
   onPress,
 }: {
-  text: string;
+  text?: string;
   onPress: () => void;
 }) {
   return (
@@ -14,7 +14,7 @@ export default function CustomRoute({
       <Pressable onPress={onPress}>
         <ArrowIcon />
       </Pressable>
-      <Text className="text-xl font-bold text-center mx-auto text-black">{text}</Text>
+      <Text className="text-2xl font-extrabold text-center mx-auto text-black">{text}</Text>
     </View>
   );
 }
