@@ -1,38 +1,85 @@
-import * as React from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   Dimensions,
   Image,
-  Pressable,
-  SafeAreaView,
-  ScrollView,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
+  ActivityIndicator,
+  ToastAndroid,
+  ScrollView,
+  Alert,
 } from 'react-native';
-import {ScreenProps} from '../../types';
-import {makeRupiahValue} from '../../helper/formatter';
-import {arrDummyHome} from './constant';
-import CarouselCustom from './CarouselCustom';
-import BellIcon from '../../components/atoms/Icons/BellIcon';
-import SearchIcon from '../../components/atoms/Icons/SearchIcon';
+import {InfoType, ScreenProps} from '../../types';
+import {useHTTP} from '../../hooks/useHTTP';
+import CustomSwiperSkeleton from './CustomSwiperSkeleton';
 import CustomSwiper from './CustomSwiper';
-function Home({route, navigation}: ScreenProps<'Home'>) {
-  const width = Dimensions.get('window').width;
-  const getSearchData = () => {
+import SearchIcon from '../../components/atoms/Icons/SearchIcon';
+import {useFocusEffect} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import infoSlice from '../../redux/InfoSlice/InfoSlice';
+import SkeletonLoaderOneBar from '../../components/organism/SkeletonOneBar';
 
-  }
+function Home({route, navigation}: ScreenProps<'Home'>) {
+  const dispatch = useDispatch();
+  const {getRequest} = useHTTP();
+  const width = Dimensions.get('window').width;
+  const [course, setCourse] = useState([]);
+  const [error, setError] = useState(false);
+  const info = useSelector((state: InfoType) => state.info);
+  const [loading, setLoading] = useState(true);
+  const scrollViewRef = useRef<ScrollView>(null);
+  useFocusEffect(
+    React.useCallback(() => {
+      getCourse();
+      getAccountUser();
+    }, []),
+  );
+  const getCourse = async () => {
+    try {
+      const result = await getRequest('/user/course?size=3&page=1');
+      if (!result?.data) {
+        ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const getAccountUser = async () => {
+    try {
+      const result = await getRequest('/user/info');
+      if (!result?.data) {
+        ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
+      }
+      dispatch(infoSlice.actions.updateInfo(result?.data));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View className="flex-1 p-4">
       <View className="flex flex-row justify-between">
         <View className="flex flex-row">
-          <Image
-            source={require('../../assets/photo.png')}
-            className="flex w-12 h-12"
-          />
-          <Text className="text-base text-black font-bold pt-4">
-            Welcome , Chandra
-          </Text>
+          {loading ? (
+            <SkeletonLoaderOneBar />
+          ) : (
+            <>
+              <Image
+                source={{
+                  uri: info.image,
+                }}
+                className="flex w-12 h-12"
+              />
+              <Text className="text-base text-black font-bold pt-4">
+                Welcome , {info.name}
+              </Text>
+            </>
+          )}
         </View>
       </View>
       <View className="flex flex-row items-center pt-10">
@@ -51,7 +98,12 @@ function Home({route, navigation}: ScreenProps<'Home'>) {
         <Text className="text-black font-bold text-lg">Popular Course</Text>
         <Text className="text-primary-50">See All</Text>
       </View>
-      <CustomSwiper data={arrDummyHome} navigation={navigation} />
+
+      {loading ? (
+        <CustomSwiperSkeleton />
+      ) : (
+        <CustomSwiper data={course} navigation={navigation} />
+      )}
     </View>
   );
 }

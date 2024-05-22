@@ -3,12 +3,17 @@ import {Text, Image, TouchableOpacity, View} from 'react-native';
 import {ScreenProps} from '../../types';
 import {arrayList} from './constant';
 import CustomRoute from '../../components/atoms/CustomRoute/CustomRoute.atom';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch } from 'react-redux';
+import sessionSlice from '../../redux/SessionSlice/SessionSlice';
 
 function Profile({route, navigation}: ScreenProps<'Profile'>) {
+  const dispatch = useDispatch()
   const handleLogout = () => {
-    AsyncStorage.clear()
+    dispatch(sessionSlice.actions.removeToken())
     navigation.navigate('Login')
+  }
+  const handleClicks= (list: any)=>{
+    navigation.navigate(list.route)
   }
   
   return (
@@ -27,7 +32,7 @@ function Profile({route, navigation}: ScreenProps<'Profile'>) {
               className={`gap-2 border rounded-lg flex justify-center my-1 ${
                 list.route === 'Logout' && 'bg-danger-50'
               }`}
-              onPress={() => list.route === 'Logout' ?  handleLogout() : navigation.navigate(list.route)}>
+              onPress={() => list.route !== 'Logout' ? handleClicks(list) : handleLogout() }>
               <View className="flex-1">{list.icon}</View>
               <Text
                 className={`${

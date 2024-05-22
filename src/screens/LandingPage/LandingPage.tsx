@@ -48,12 +48,12 @@ const LandingPage = ({navigation}: ScreenProps<'LandingPage'>) => {
                 </Text>
                 <Pressable
                   onPress={() => navigation.navigate('Login')}
-                  className="rounded-lg border bg-primary-50 my-4 py-2 absolute bottom-20 right-1 mx-auto w-96">
+                  className="rounded-lg border border-primary-50 bg-primary-50 my-4 py-2 absolute bottom-20 right-1 mx-auto w-96">
                   <Text className="text-center text-white">Login</Text>
                 </Pressable>
                 <Pressable
                   onPress={() => navigation.navigate('Register')}
-                  className="absolute bottom-5 rounded-lg border my-4 py-2 w-96 right-1">
+                  className="absolute bottom-5 rounded-lg border border-primary-50 my-4 py-2 w-96 right-1">
                   <Text className="text-center text-primary-50">Sign Up</Text>
                 </Pressable>
               </View>

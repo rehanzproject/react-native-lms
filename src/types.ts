@@ -1,4 +1,7 @@
-import {NativeStackNavigationProp, NativeStackScreenProps} from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import {ReactNode} from 'react';
 
 export type RootStackParamList = {
@@ -27,6 +30,9 @@ export type RootStackParamList = {
   Search: undefined;
   DetailCourse: undefined | {id: string};
   BuyCourse: undefined | {id: string; price: number; coupon: string};
+  ChangePassword: undefined;
+  Verification: undefined;
+
   // Define other screens if you have them
 };
 
@@ -43,11 +49,10 @@ export interface EditType {
   nim: string;
   email: string;
   phone: string;
-  confirmPassword: string;
 }
 export interface IDataCourse {
-  data: DataCourse[];
-  navigation: NativeStackNavigationProp<RootStackParamList, "Home", undefined>
+  data?: DataCourse[];
+  navigation: NativeStackNavigationProp<RootStackParamList, 'Home', undefined>;
 }
 type DataCourse = {
   name: string;
@@ -55,3 +60,36 @@ type DataCourse = {
   image: string;
   rating: number;
 };
+export interface SessionType {
+  session: {
+    token: string;
+  };
+}
+export interface InfoType {
+  info: {
+    name: string;
+    image: string;
+  };
+}
+
+export interface HistoryItem {
+  invoice: string;
+  name: string;
+  price: number;
+  success: boolean;
+  paid: string;
+  payment_method: string; // Assuming payment_method is a string, you can change it accordingly
+}
+export interface CourseItem {
+  course_id: string;
+  name: string;
+  thumbnail: string;
+  description: string;
+  price: number;
+  rating1?: number;
+  rating2?: number;
+  rating3?: number;
+  rating4?: number;
+  rating5?: number;
+  modules: Array<{module_id: string; name: string}>;
+}

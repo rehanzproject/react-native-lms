@@ -27,6 +27,8 @@ import AllCourse from '../screens/Course/AllCourse/AllCourse';
 import DetailLesson from '../screens/Course/DetailCourse/DetailLesson';
 import Help from '../screens/Help/Help';
 import Search from '../screens/Search/Search';
+import ChangePassword from '../screens/ChangePassword/ChangePassword';
+import Verification from '../screens/VerificationOTP/Verif';
 
 function TabBar() {
   const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -44,7 +46,7 @@ function TabBar() {
   );
 }
 
-function RootRouter(): JSX.Element {
+function RootRouter(){
   const Stack = createNativeStackNavigator<RootStackParamList>();
   return (
     <NavigationContainer>
@@ -57,6 +59,8 @@ function RootRouter(): JSX.Element {
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Help" component={Help} />
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+        <Stack.Screen name="ChangePassword" component={ChangePassword} />
+        <Stack.Screen name="Verification" component={Verification} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="SearchCourse" component={SearchCourse} />
         <Stack.Screen name="DetailCourse" component={DetailCourse} />

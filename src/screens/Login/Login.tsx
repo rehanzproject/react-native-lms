@@ -10,20 +10,29 @@ import {
 import {ScreenProps} from '../../types';
 import {Formik} from 'formik';
 import {useHTTP} from '../../hooks/useHTTP';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {LoginSchema} from './constant';
 import HandIcon from '../../components/atoms/Icons/HandIcon';
+import { useDispatch } from 'react-redux';
+import sessionSlice from '../../redux/SessionSlice/SessionSlice';
 
 function Login({navigation}: ScreenProps<'Login'>) {
   const {loginRequest} = useHTTP();
+  const dispatch = useDispatch()
   const onSubmit = useCallback(
     async (values: {email: string; password: string}) => {
-      // const result = await loginRequest('/login', values);
-      // if (!result?.data) {
-      //   ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
-      // }
-      navigation.navigate('TabBar');
-      // AsyncStorage.setItem('accessToken', result?.data.accessToken as string);
+    
+    try {
+      const result = await loginRequest('/user/login', values);
+      if (!result?.data) {
+        ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
+      }
+      dispatch(sessionSlice.actions.updateToken(result?.data))
+      navigation.navigate('Home');
+    } catch (error) {
+      console.log(error);
+      
+    }
+      
     },
     [],
   );
@@ -48,6 +57,7 @@ function Login({navigation}: ScreenProps<'Login'>) {
               onBlur={handleBlur('email')}
               value={values.email}
               placeholder="email"
+              placeholderTextColor={'gray'}
               className="border rounded-lg text-black"
             />
             <Text className="text-black">{errors.email}</Text>
@@ -56,8 +66,10 @@ function Login({navigation}: ScreenProps<'Login'>) {
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}
               value={values.password}
+              placeholder='*******'
               secureTextEntry
-              
+              placeholderTextColor={'gray'}
+             
               className="border rounded-lg text-black"
             />
             <Text className="text-black">{errors.password}</Text>
@@ -72,7 +84,7 @@ function Login({navigation}: ScreenProps<'Login'>) {
             </Pressable>
             <Pressable
               onPress={() => navigation.navigate('Register')}
-              className="rounded-lg border py-2">
+              className="rounded-lg border border-primary-50 py-2">
               <Text className="text-center text-lg text-primary-50">
                 Didn't have an account , Sign Up
               </Text>

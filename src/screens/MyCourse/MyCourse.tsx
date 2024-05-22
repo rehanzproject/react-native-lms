@@ -14,7 +14,7 @@ import * as Progress from 'react-native-progress';
 
 export default function MyCourse({navigation, route}: ScreenProps<'MyCourse'>) {
   return (
-    <View className="p-4 ">
+    <View className="p-4">
       <CustomRoute onPress={() => navigation.goBack()} text="My Course" />
       <View className="flex-row justify-evenly ">
         <Pressable onPress={() => navigation.navigate('MyCourse')}>
@@ -31,6 +31,7 @@ export default function MyCourse({navigation, route}: ScreenProps<'MyCourse'>) {
         {dummyCourseProgress.map((list) => (
           <TouchableOpacity
             key={list.name}
+            onPress={()=>navigation.navigate('Lesson')}
             className="flex flex-row border rounded-lg my-2 ">
             <Image
               source={require('../../assets/course.png')}

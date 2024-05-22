@@ -11,5 +11,28 @@ export const arrDummyLesson = [
   'Desain Visual',
   'Proses Detail Antarmuka',
   'Desain Responsif',
-  'Animasi dan interaksi'
+  'Animasi dan interaksi',
+];
+
+export const dummyRating = [
+  {
+    no: 1,
+    rating: 5,
+  },
+  {
+    no: 2,
+    rating: 3,
+  },
+  {
+    no: 3,
+    rating: 4
+  },
+  {
+    no: 4,
+    rating: 5,
+  },
+  {
+    no: 5,
+    rating: 5,
+  },
 ];

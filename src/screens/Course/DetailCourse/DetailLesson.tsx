@@ -10,14 +10,19 @@ const DetailLesson = ({route, navigation}: ScreenProps<'DetailLesson'>) => {
   return (
     <ScrollView contentContainerStyle={{flexGrow: 1}} className='p-5'>
       <CustomRoute onPress={() => navigation.goBack()} text="Course Detail" />
-      <Image source={require('../../../assets/courselong.png')} className='w-full rounded-xl' />
-      <Text className="text-black font-bold">{dummy.name}</Text>
+      <Image
+        source={require('../../../assets/courselong.png')}
+        className="w-full rounded-xl"
+      />
+      <Text className="text-black font-bold text-xl pt-4">{dummy.name}</Text>
       <View className="flex flex-row justify-between">
         <View className="flex-row">
           <StarIcon />
-          <Text className='text-black'>{dummy.rating}</Text>
+          <Text className="text-black text-lg">{dummy.rating}</Text>
         </View>
-        <Text className="text-primary-50">{makeRupiahValue(dummy.price)}</Text>
+        <Text className="text-primary-50 font-bold text-lg">
+          {makeRupiahValue(dummy.price)}
+        </Text>
       </View>
       <View className="flex flex-row justify-between gap-2 pt-4 px-2 mr-2">
         <Pressable

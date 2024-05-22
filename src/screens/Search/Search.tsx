@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
- 
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import {Pressable, Text, TextInput, View} from 'react-native';
 import {ScreenProps} from '../../types';
 import SearchIcon from '../../components/atoms/Icons/SearchIcon';
 import CustomRoute from '../../components/atoms/CustomRoute/CustomRoute.atom';
@@ -52,8 +47,13 @@ function Search({route, navigation}: ScreenProps<'Search'>) {
           <View
             key={index}
             className="flex flex-row justify-between mx-8 pt-5 ">
-            <Text className="text-black text-xl">{item}</Text>
-            <XIcon />
+            <Pressable
+              onPress={() => navigation.navigate('AllCourse', {search: item})}>
+              <Text className="text-black text-xl">{item}</Text>
+            </Pressable>
+            <Pressable>
+              <XIcon />
+            </Pressable>
           </View>
         ))}
       </View>

@@ -8,15 +8,19 @@ import {IDataCourse} from '../../types';
 const CustomSwiper = ({data, navigation}: IDataCourse) => (
   <View className="flex-1">
     <SwiperFlatList
-      index={2}
       data={data}
       renderItem={({item}) => (
         <Pressable
-          onPress={() => navigation.navigate('DetailCourse')}
+          onPress={() =>
+            navigation.navigate('DetailCourse', {id: item.course_id})
+          }
           style={{width: 150, height: 150}}
           className="border border-black rounded-lg mr-2 p-1">
           <Image
-            source={require('../../assets/courselong.png')}
+            source={{
+              uri: item.thumbnail,
+            }}
+            defaultSource={require('../../assets/defaultThumbnail.png')} // Provide the path to your fallback image
             style={{width: '100%', height: '50%'}}
             resizeMode="contain"
           />

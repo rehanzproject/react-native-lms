@@ -1,20 +1,49 @@
-import React, {useState} from 'react';
-import {Button, Image, Pressable, Text, TextInput, View} from 'react-native';
+import React, {useCallback, useState} from 'react';
+import {
+  Button,
+  Image,
+  Pressable,
+  Text,
+  TextInput,
+  ToastAndroid,
+  View,
+} from 'react-native';
 import {ScreenProps} from '../../types';
 import {Formik} from 'formik';
 import {RegisterSchema} from './constant';
 import HandIcon from '../../components/atoms/Icons/HandIcon';
 import Modal from 'react-native-modal';
+import {useDispatch} from 'react-redux';
+import sessionSlice from '../../redux/SessionSlice/SessionSlice';
+import {useHTTP} from '../../hooks/useHTTP';
 
 function Register({navigation}: ScreenProps<'Register'>) {
   const [handleModal, setHandleModal] = useState<boolean>(false);
-  const handleClick = (values: any) => {
-    setHandleModal(!handleModal);
-    console.log(values);
-  };
+  const dispatch = useDispatch();
+  const {postRequest} = useHTTP();
+  const handleClickModal = () => {
+    setHandleModal(!handleModal)
+    navigation.navigate('Login')
+  }
+  const handleClick = useCallback(
+    async (values: {nim: number; email: string; password: string; confirmPassword: string}) => {
+      try {
+        const result = await postRequest('/user/register', values);
+        if (!result?.data) {
+          ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
+        }
+        dispatch(sessionSlice.actions.updateToken(result?.data));
+        navigation.navigate('TabBar');
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [],
+  );
+
   return (
     <Formik
-      initialValues={{nim: '', email: '', password: '', confirmPassword: ''}}
+      initialValues={{nim: 0, email: '', password: '', confirmPassword: ''}}
       validationSchema={RegisterSchema}
       onSubmit={(values) => handleClick(values)}>
       {({errors, handleChange, handleBlur, handleSubmit, values}) => (
@@ -31,7 +60,7 @@ function Register({navigation}: ScreenProps<'Register'>) {
             <TextInput
               onChangeText={handleChange('nim')}
               onBlur={handleBlur('nim')}
-              value={values.nim}
+              value={String(values.nim)}
               placeholder="eg: 20232053"
               placeholderTextColor={'gray'}
               className="border rounded-lg text-black"
@@ -84,7 +113,7 @@ function Register({navigation}: ScreenProps<'Register'>) {
           </View>
           <Modal isVisible={handleModal}>
             <Pressable
-              onPress={handleClick}
+              onPress={()=>handleClickModal()}
               className="flex justify-center items-center bg-white h-2/5">
               <View className="">
                 <Image source={require('../../assets/centang.png')} />

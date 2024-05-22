@@ -1,6 +1,5 @@
-import {View, Text, Pressable, TextInput} from 'react-native';
+import {View, Text, Pressable, TextInput, TouchableOpacity} from 'react-native';
 import React from 'react';
-import ArrowIcon from '../../../components/atoms/Icons/ArrowIcon';
 import {ScreenProps} from '../../../types';
 import SearchIcon from '../../../components/atoms/Icons/SearchIcon';
 import XIcon from '../../../components/atoms/Icons/XIcon';
@@ -28,8 +27,11 @@ const SearchCourse = ({navigation}: ScreenProps<'SearchCourse'>) => {
       <View className="flex-row justify-between w-3/4">
         {arrDummySearch.map((list, index) => (
           <View key={index} className="flex-row justify-between">
-            <Text>{list}</Text>
-            <Pressable>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('AllCourse', {search: list})}>
+              <Text className="text-black">{list}</Text>
+            </TouchableOpacity>
+            <Pressable onPress={() => arrDummySearch.pop()}>
               <XIcon />
             </Pressable>
           </View>

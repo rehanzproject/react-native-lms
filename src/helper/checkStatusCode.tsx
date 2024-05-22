@@ -1,9 +1,8 @@
-import { useNavigation } from '@react-navigation/native';
 import {AxiosResponse} from 'axios';
 import {ToastAndroid} from 'react-native';
 interface IResponse {
   message: string;
-  data: any
+  data: any;
   code: number;
 }
 export const checkStatusCode = (result: AxiosResponse<IResponse>) => {
