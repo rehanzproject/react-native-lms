@@ -1,75 +1,109 @@
-import {View, Text, Image, Pressable, ScrollView} from 'react-native';
-import React from 'react';
-import {ScreenProps} from '../../../types';
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  ScrollView,
+  ToastAndroid,
+} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {CourseItem, ScreenProps} from '../../../types';
 import CustomRoute from '../../../components/atoms/CustomRoute/CustomRoute.atom';
-import {arrDummyLesson, dummy} from './constant';
 import StarIcon from '../../../components/atoms/Icons/StarIcon';
 import {makeRupiahValue} from '../../../helper/formatter';
+import {useHTTP} from '../../../hooks/useHTTP';
+import {useFocusEffect} from '@react-navigation/native';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 const DetailLesson = ({route, navigation}: ScreenProps<'DetailLesson'>) => {
+  const {getRequest, postRequest} = useHTTP();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [data, setData] = useState<CourseItem>();
+
+  useEffect(() => {
+    getCourse();
+  }, []);
+
+  const onConfirm = async () => {
+    try {
+      const result = await postRequest(`/user/checkout?id=${route.params?.id}`);
+      if (!result?.data) {
+        ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
+      }
+      navigation.navigate('BuyCourse', {
+        id: data?.course_id ?? '',
+        coupon: 'LETSROCK',
+        price: data?.price ?? 0,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getCourse = async () => {
+    try {
+      const result = await getRequest(`/user/course/modules?id=${route.params?.id}`);
+      if (!result?.data) {
+        ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
+      }
+      setData(result?.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <ScrollView contentContainerStyle={{flexGrow: 1}} className='p-5'>
+    <ScrollView contentContainerStyle={{flexGrow: 1}}>
       <CustomRoute onPress={() => navigation.goBack()} text="Course Detail" />
       <Image
-        source={require('../../../assets/courselong.png')}
-        className="w-full rounded-xl"
+        source={{uri: data?.thumbnail}}
+        style={{width: '100%', aspectRatio: 16/9, borderRadius: wp(5)}}
       />
-      <Text className="text-black font-bold text-xl pt-4">{dummy.name}</Text>
-      <View className="flex flex-row justify-between">
-        <View className="flex-row">
+      <Text style={{color: 'black', fontWeight: 'bold', fontSize: wp(5), paddingTop: hp(2)}}>{data?.name}</Text>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+        <View style={{flexDirection: 'row'}}>
           <StarIcon />
-          <Text className="text-black text-lg">{dummy.rating}</Text>
+          <Text style={{color: 'black', fontSize: wp(4), fontWeight: 'bold'}}>{data?.rating1 ?? 'Belum ada rating'}</Text>
         </View>
-        <Text className="text-primary-50 font-bold text-lg">
-          {makeRupiahValue(dummy.price)}
+        <Text style={{color: '#0D6EFD', fontWeight: 'bold', fontSize: wp(4)}}>
+          {makeRupiahValue(data?.price ?? 0)}
         </Text>
       </View>
-      <View className="flex flex-row justify-between gap-2 pt-4 px-2 mr-2">
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', gap: wp(2), paddingTop: hp(4), paddingHorizontal: wp(2), marginRight: wp(2)}}>
         <Pressable
-          onPress={() => navigation.navigate('DetailCourse', {id: ''})}
-          className={`rounded-lg border border-primary-50 w-1/2 ${
-            route.name !== 'DetailLesson' ? 'bg-primary-50' : ''
-          }`}>
-          <Text
-            className={`text-center p-2 ${
-              route.name !== 'DetailLesson' ? 'text-white' : 'text-primary-50'
-            }`}>
-            Overview
-          </Text>
+          onPress={() => navigation.navigate('DetailCourse', {id: route.params?.id || ''})}
+          style={{borderRadius: 12, borderWidth: 1, borderColor: '#0D6EFD', width: '48%', backgroundColor: route.name !== 'DetailLesson' ? '#0D6EFD' : 'transparent'}}>
+          <Text style={{textAlign: 'center', paddingVertical: wp(2), color: route.name !== 'DetailLesson' ? 'white' : '#0D6EFD', fontWeight: 'bold', fontSize: wp(4)}}>Overview</Text>
         </Pressable>
         <Pressable
-          onPress={() => navigation.navigate('DetailLesson')}
-          className={`rounded-lg w-1/2 border border-primary-50 ${
-            route.name === 'DetailLesson' ? 'bg-primary-50' : ''
-          }`}>
-          <Text
-            className={`text-center p-2  ${
-              route.name === 'DetailLesson' ? 'text-white' : 'text-primary-50'
-            }`}>
-            Lessons
-          </Text>
+          onPress={() => navigation.navigate('DetailLesson', {id: route.params?.id || ''})}
+          style={{borderRadius: 12, borderWidth: 1, borderColor: '#0D6EFD', width: '48%', backgroundColor: route.name === 'DetailLesson' ? '#0D6EFD' : 'transparent'}}>
+          <Text style={{textAlign: 'center', paddingVertical: wp(2), color: route.name === 'DetailLesson' ? 'white' : '#0D6EFD', fontWeight: 'bold', fontSize: wp(4)}}>Lessons</Text>
         </Pressable>
       </View>
       <View>
-        {arrDummyLesson.map((list, index) => (
-          <Text
-            className="font-bold border rounded-lg p-2 mx-2 text-black my-2"
-            key={index}>
-            {list}
-          </Text>
+        {data?.modules?.map((list, index) => (
+          <Text style={{fontSize: wp(4), fontWeight: 'bold', borderWidth: 1, borderRadius: wp(2), padding: wp(2), margin: wp(2), color: 'black' }} key={index}>{list.name}</Text>
         ))}
       </View>
-      <View className="absolute bottom-0 w-full p-4 ">
-        <Pressable
-          onPress={() =>
-            navigation.navigate('BuyCourse', {
-              id: '',
-              coupon: 'LETSROCK',
-              price: 200000,
-            })
-          }
-          className=" bg-primary-50 rounded-lg">
-          <Text className="text-center p-2 text-white">Buy Now</Text>
+      <View style={{position: 'absolute', bottom: 0, width: '100%'}}>
+      <Pressable
+          onPress={() => onConfirm()}
+          style={{backgroundColor: '#0D6EFD', borderRadius: 12 , margin: wp(2)}}>
+          <Text
+            style={{
+              textAlign: 'center',
+              padding: wp(2),
+              color: 'white',
+              fontWeight: 'bold',
+              fontSize: wp(5),
+            }}>
+            Buy Now
+          </Text>
         </Pressable>
       </View>
     </ScrollView>

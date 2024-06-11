@@ -1,101 +1,183 @@
-import React, {useCallback, useState} from 'react';
+import React, { useCallback, useState } from 'react';
 import {
+  Image,
   Pressable,
   Text,
   TextInput,
   ToastAndroid,
   TouchableOpacity,
   View,
+  StyleSheet,
 } from 'react-native';
-import {ScreenProps} from '../../types';
-import {Formik} from 'formik';
-import {useHTTP} from '../../hooks/useHTTP';
-import {LoginSchema} from './constant';
+import { ScreenProps } from '../../types';
+import { Formik } from 'formik';
+import { useHTTP } from '../../hooks/useHTTP';
+import { LoginSchema } from './constant';
 import HandIcon from '../../components/atoms/Icons/HandIcon';
 import { useDispatch } from 'react-redux';
 import sessionSlice from '../../redux/SessionSlice/SessionSlice';
+import Modal from 'react-native-modal';
 
-function Login({navigation}: ScreenProps<'Login'>) {
-  const {loginRequest} = useHTTP();
-  const dispatch = useDispatch()
+import {
+  widthPercentageToDP as wd,
+  heightPercentageToDP as hd,
+} from 'react-native-responsive-screen';
+
+function Login({ navigation }: ScreenProps<'Login'>) {
+  const { loginRequest } = useHTTP();
+  const [handleModal, setHandleModal] = useState(false);
+  const dispatch = useDispatch();
   const onSubmit = useCallback(
-    async (values: {email: string; password: string}) => {
-    
-    try {
-      const result = await loginRequest('/user/login', values);
-      if (!result?.data) {
-        ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
+    async (values: { email: string; password: string }) => {
+      try {
+        const result = await loginRequest('/user/login', values);
+        if (!result?.data) {
+          ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
+        }
+        dispatch(sessionSlice.actions.updateToken(result?.data));
+        navigation.navigate('Home');
+      } catch (error) {
+        console.log(error);
       }
-      dispatch(sessionSlice.actions.updateToken(result?.data))
-      navigation.navigate('Home');
-    } catch (error) {
-      console.log(error);
-      
-    }
-      
     },
-    [],
+    [dispatch, loginRequest, navigation]
   );
+
   return (
     <Formik
-      initialValues={{email: '', password: ''}}
+      initialValues={{ email: '', password: '' }}
       validationSchema={LoginSchema}
-      onSubmit={(values) => onSubmit(values)}>
-      {({errors, handleChange, handleBlur, handleSubmit, values}) => (
-        <View className="flex-1 justify-center">
-          <View className="p-8">
-            <View className="flex flex-row">
-              <Text className="text-2xl text-black font-bold pb-8">
-                Hello There
-              </Text>
+      onSubmit={(values) => onSubmit(values)}
+    >
+      {({ errors, handleChange, handleBlur, handleSubmit, values }) => (
+        <View style={styles.container}>
+          <View style={styles.innerContainer}>
+            <View style={styles.headerContainer}>
+              <Text style={styles.title}>Hello There</Text>
               <HandIcon />
             </View>
-
-            <Text className="text-black text-xl">Email:</Text>
+            <Text style={styles.label}>Email:</Text>
             <TextInput
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
               value={values.email}
               placeholder="email"
-              placeholderTextColor={'gray'}
-              className="border rounded-lg text-black"
+              placeholderTextColor="gray"
+              style={styles.input}
             />
-            <Text className="text-black">{errors.email}</Text>
-            <Text className="text-black text-xl">Password :</Text>
+            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+            <Text style={styles.label}>Password :</Text>
             <TextInput
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}
               value={values.password}
-              placeholder='*******'
+              placeholder="*******"
               secureTextEntry
-              placeholderTextColor={'gray'}
-             
-              className="border rounded-lg text-black"
+              placeholderTextColor="gray"
+              style={styles.input}
             />
-            <Text className="text-black">{errors.password}</Text>
-         <View className='pt-16'>
-         <TouchableOpacity className="pb-5" onPress={()=>navigation.navigate('ForgotPassword')}>
-              <Text className='text-black mx-auto text-xl font-bold'>Forgot Password?</Text>
-            </TouchableOpacity>
-            <Pressable
-              onPress={() => handleSubmit()}
-              className="rounded-lg bg-primary-50 mt-8 py-2 mb-2">
-              <Text className="text-center text-white text-lg">Sign In</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => navigation.navigate('Register')}
-              className="rounded-lg border border-primary-50 py-2">
-              <Text className="text-center text-lg text-primary-50">
-                Didn't have an account , Sign Up
-              </Text>
-            </Pressable>
-         </View>
-          
+            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+            <View style={styles.footerContainer}>
+              <TouchableOpacity
+                style={styles.forgotPassword}
+                onPress={() => navigation.navigate('ForgotPassword')}
+              >
+                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              </TouchableOpacity>
+              <Pressable onPress={()=>handleSubmit()} style={styles.signInButton}>
+                <Text style={styles.signInButtonText}>Sign In</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => navigation.navigate('Register')}
+                style={styles.signUpButton}
+              >
+                <Text style={styles.signUpButtonText}>
+                  Didn't have an account , Sign Up
+                </Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       )}
     </Formik>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: wd(1), // 8% of the screen width
+  },
+  innerContainer: {
+    padding: wd(8), // 8% of the screen width
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: hd(4), // 4% of the screen height
+  },
+  title: {
+    fontSize: wd(6), // 6% of the screen width
+    color: 'black',
+    fontWeight: 'bold',
+  },
+  label: {
+    fontSize: wd(4.5), // 4.5% of the screen width
+    color: 'black',
+    marginBottom: hd(1), // 1% of the screen height
+  },
+  input: {
+    width: '100%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: wd(4), // 4% of the screen width
+    fontSize: wd(4), // 4% of the screen width
+    color: 'black',
+    marginBottom: hd(2), // 2% of the screen height
+  },
+  errorText: {
+    color: 'red',
+    fontSize: wd(3.5), // 3.5% of the screen width
+    marginBottom: hd(1), // 1% of the screen height
+  },
+  footerContainer: {
+    paddingTop: hd(8), // 8% of the screen height
+  },
+  forgotPassword: {
+    paddingBottom: hd(2), // 2% of the screen height
+  },
+  forgotPasswordText: {
+    fontSize: wd(4.5), // 4.5% of the screen width
+    color: 'black',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  signInButton: {
+    backgroundColor: '#0D6EFD',
+    paddingVertical: hd(2), // 2% of the screen height
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: hd(2), // 2% of the screen height
+  },
+  signInButtonText: {
+    color: 'white',
+    fontSize: wd(4.5), // 4.5% of the screen width
+  },
+  signUpButton: {
+    borderWidth: 1,
+    borderColor: '#0D6EFD',
+    paddingVertical: hd(2), // 2% of the screen height
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  signUpButtonText: {
+    fontSize: wd(4), // 4.5% of the screen width
+    color: '#0D6EFD',
+  },
+});
 
 export default Login;

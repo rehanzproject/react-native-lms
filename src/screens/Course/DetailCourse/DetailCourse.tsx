@@ -1,19 +1,49 @@
-import {View, Text, Image, Pressable, ScrollView, ToastAndroid} from 'react-native';
-import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  ScrollView,
+  ToastAndroid,
+} from 'react-native';
+import React, {useState} from 'react';
 import {CourseItem, ScreenProps} from '../../../types';
 import CustomRoute from '../../../components/atoms/CustomRoute/CustomRoute.atom';
 import {dummy, dummyRating} from './constant';
 import StarIcon from '../../../components/atoms/Icons/StarIcon';
 import {makeRupiahValue} from '../../../helper/formatter';
 import * as Progress from 'react-native-progress';
-import { useFocusEffect } from '@react-navigation/native';
-import { useHTTP } from '../../../hooks/useHTTP';
+import {useFocusEffect} from '@react-navigation/native';
+import {useHTTP} from '../../../hooks/useHTTP';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 const DetailCourse = ({route, navigation}: ScreenProps<'DetailCourse'>) => {
-  const {getRequest} = useHTTP()
-  const [loading, setLoading] = useState<boolean>(true)
-  const [data, setData] = useState<CourseItem>()
+  const {getRequest, postRequest} = useHTTP();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [data, setData] = useState<CourseItem>();
   
+  const onConfirm = async () => {
+    try {
+      const result = await postRequest(`/user/checkout?id=${route.params?.id}`);
+      if (!result?.data) {
+        ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
+      }
+      
+      navigation.navigate('BuyCourse', {
+        id: result?.data?.id ?? '',
+        coupon: data?.coupon ?? '',
+        price: data?.price ?? 0,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       getCourse();
@@ -21,11 +51,13 @@ const DetailCourse = ({route, navigation}: ScreenProps<'DetailCourse'>) => {
   );
   const getCourse = async () => {
     try {
-      const result = await getRequest(`/user/course/modules?id=${route.params?.id}`);
+      const result = await getRequest(
+        `/user/course/modules?id=${route.params?.id}`,
+      );
       if (!result?.data) {
         ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
       }
-      setData(result?.data)
+      setData(result?.data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -33,83 +65,155 @@ const DetailCourse = ({route, navigation}: ScreenProps<'DetailCourse'>) => {
     }
   };
   return (
-    <ScrollView contentContainerStyle={{flexGrow: 1}} className="p-5">
+    <ScrollView contentContainerStyle={{flexGrow: 1}}>
       <CustomRoute onPress={() => navigation.goBack()} text="Course Detail" />
       <Image
-        source={require('../../../assets/courselong.png')}
-        className="w-full rounded-xl"
+        source={{uri: data?.thumbnail}}
+        style={{width: '100%', aspectRatio: 16 / 9, borderRadius: wp(5) , marginHorizontal: 2}}
       />
-      <Text className="text-black font-bold text-xl pt-4">{data?.name}</Text>
-      <View className="flex flex-row justify-between">
-        <View className="flex-row">
+      <Text
+        style={{
+          color: 'black',
+          fontWeight: 'bold',
+          fontSize: wp(5),
+          paddingTop: hp(2),
+        }}>
+        {data?.name}
+      </Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+        <View style={{flexDirection: 'row'}}>
           <StarIcon />
-          <Text className="text-black text-lg">{data?.rating1}</Text>
+          <Text style={{color: 'black', fontSize: wp(4), fontWeight: 'bold'}}>
+            {data?.rating1 ?? 'Belum ada rating'}
+          </Text>
         </View>
-        <Text className="text-primary-50 font-bold text-lg">
-          {makeRupiahValue(data?.price ?? 0 )}
+        <Text style={{color: '#0D6EFD', fontWeight: 'bold', fontSize: wp(4)}}>
+          {makeRupiahValue(data?.price ?? 0)}
         </Text>
       </View>
-      <View className="flex flex-row justify-between gap-2 pt-4 px-2 mr-2">
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          gap: wp(2),
+          paddingTop: hp(4),
+          paddingHorizontal: wp(2),
+          marginRight: wp(2),
+        }}>
         <Pressable
-          onPress={() => navigation.navigate('DetailCourse')}
-          className={`rounded-lg border border-primary-50 w-1/2 ${
-            route.name === 'DetailCourse' ? 'bg-primary-50' : ''
-          }`}>
+          onPress={() =>
+            navigation.navigate('DetailCourse', {id: route.params?.id || ''})
+          }
+          style={{
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: '#0D6EFD',
+            width: '48%',
+            backgroundColor:
+              route.name === 'DetailCourse' ? '#0D6EFD' : 'transparent',
+          }}>
           <Text
-            className={`text-center p-2 ${
-              route.name === 'DetailCourse' ? 'text-white' : 'text-primary-50'
-            }`}>
+            style={{
+              textAlign: 'center',
+              paddingVertical: wp(2),
+              color: route.name === 'DetailCourse' ? 'white' : '#0D6EFD',
+              fontWeight: 'bold',
+              fontSize: wp(4),
+            }}>
             Overview
           </Text>
         </Pressable>
         <Pressable
-          onPress={() => navigation.navigate('DetailLesson')}
-          className={`rounded-lg w-1/2 border border-primary-50 ${
-            route.name !== 'DetailCourse' ? 'bg-primary-50' : ''
-          }`}>
+          onPress={() =>
+            navigation.navigate('DetailLesson', {id: route.params?.id || ''})
+          }
+          style={{
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: '#0D6EFD',
+            width: '48%',
+            backgroundColor:
+              route.name !== 'DetailCourse' ? '#0D6EFD' : 'transparent',
+          }}>
           <Text
-            className={`text-center p-2 ${
-              route.name !== 'DetailCourse' ? 'text-white' : 'text-primary-50'
-            }`}>
+            style={{
+              textAlign: 'center',
+              paddingVertical: wp(2),
+              color: route.name !== 'DetailCourse' ? 'white' : '#0D6EFD',
+              fontWeight: 'bold',
+              fontSize: wp(4),
+            }}>
             Lessons
           </Text>
         </Pressable>
       </View>
-      <Text className="text-black font-bold text-lg">Description</Text>
-      <Text className="text-black">{data?.description}</Text>
-      <View className="flex-1">
-        <Text className="text-black font-bold text-lg pt-2">Reviews</Text>
-        <Text className="text-black font-extrabold text-4xl">4,5</Text>
-        <View className="absolute right-12 py-5">
+      <Text
+        style={{
+          color: 'black',
+          fontWeight: 'bold',
+          fontSize: wp(5),
+          paddingTop: hp(2),
+        }}>
+        Description
+      </Text>
+      <Text style={{color: 'black', fontSize: wp(4)}}>{data?.description}</Text>
+      <View style={{position: 'relative', flex: 1}}>
+        <Text
+          style={{
+            color: 'black',
+            fontWeight: 'bold',
+            fontSize: wp(5),
+            paddingTop: hp(2),
+          }}>
+          Reviews
+        </Text>
+        <Text style={{color: 'black', fontWeight: 'bold', fontSize: wp(10)}}>
+          4,5
+        </Text>
+        <View
+          style={{position: 'absolute', right: wp(10), top: hp(8), flex: 1}}>
           {dummyRating.map((item, i) => (
-            <View key={i} className='flex-1 flex-row gap-2 py-1'>
-              <Text className="text-black">{item.no}</Text>
+            <View
+              key={i}
+              style={{
+                flexDirection: 'row',
+                gap: wp(2),
+                paddingVertical: hp(1),
+              }}>
+              <Text style={{color: 'black'}}>{item.no}</Text>
               <Progress.Bar
                 progress={item.rating / 10}
-                width={200}
-                height={18}
+                width={wp(50)}
+                height={hp(2)}
                 color="rgb(0,112,255)"
                 animated
                 borderWidth={0}
                 unfilledColor="rgb(217,217,217)"
-                
               />
             </View>
           ))}
         </View>
       </View>
 
-      <View className="absolute bottom-0 w-full">
+      <View style={{position: 'absolute', bottom: 0, width: '100%'}}>
         <Pressable
-          onPress={() =>
-            navigation.navigate('BuyCourse', {
-              id: data?.course_id ?? '',
-              coupon: 'LETSROCK',
-              price: data?.price ?? 0,
-            })
-          }
-          className=" bg-primary-50 rounded-lg">
-          <Text className="text-center p-2 text-white">Buy Now</Text>
+          onPress={() => onConfirm()}
+          style={{backgroundColor: '#0D6EFD', borderRadius: 12 , margin: wp(2)}}>
+          <Text
+            style={{
+              textAlign: 'center',
+              padding: wp(2),
+              color: 'white',
+              fontWeight: 'bold',
+              fontSize: wp(5),
+            }}>
+            Buy Now
+          </Text>
         </Pressable>
       </View>
     </ScrollView>

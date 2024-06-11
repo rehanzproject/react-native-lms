@@ -2,6 +2,8 @@ import * as Yup from 'yup';
 
 export const RegisterSchema = Yup.object().shape({
     nim: Yup.string().min(2, 'Terlalu Pendek').max(8, 'Terlalu Panjang').required('Harus diisi'),
+    name: Yup.string().min(2, 'Terlalu Pendek').max(8, 'Terlalu Panjang').required('Harus diisi'),
+    
   email: Yup.string().email('Invalid email').required('Required'),
   password: Yup.string()
     .min(2, 'Terlalu pendek')

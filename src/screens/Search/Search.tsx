@@ -4,6 +4,12 @@ import {ScreenProps} from '../../types';
 import SearchIcon from '../../components/atoms/Icons/SearchIcon';
 import CustomRoute from '../../components/atoms/CustomRoute/CustomRoute.atom';
 import XIcon from '../../components/atoms/Icons/XIcon';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+import {RFValue} from 'react-native-responsive-fontsize';
+
 function Search({route, navigation}: ScreenProps<'Search'>) {
   const example = [
     'Ui Design',
@@ -14,42 +20,74 @@ function Search({route, navigation}: ScreenProps<'Search'>) {
     'Design System',
     'Design System',
   ];
+
   return (
-    <View className="flex-1">
-      <View className="flex flex-row">
+    <View style={{flex: 1}}>
+      <View style={{flexDirection: 'row'}}>
         <CustomRoute onPress={() => navigation.goBack()} />
-        <View className="flex flex-row items-center pt-10">
-          <View className="pt-10 pl-2 absolute">
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingTop: hp(2),
+            width: wp(80),
+          }}>
+          <View
+            style={{
+              paddingTop: hp(2),
+              paddingLeft: wp(2),
+              position: 'absolute',
+            }}>
             <SearchIcon />
           </View>
           <TextInput
             placeholder="Search"
             placeholderTextColor={'gray'}
-            className="border rounded-lg w-80 text-black pl-8"
+            style={{
+              flex: 1,
+              borderColor: 'black',
+              color: 'black',
+              borderWidth: 1,
+              borderRadius: 10,
+              paddingLeft: hp(5),
+            }}
             onEndEditing={(event) => {
               navigation.navigate('AllCourse', {
                 search: event.nativeEvent.text,
               });
             }}
           />
-          <View className="absolute right-8 pt-8">
-            <XIcon />
-          </View>
         </View>
       </View>
 
-      <View className="flex flex-row justify-between mx-8 pt-5 border-b ">
-        <Text className="text-black font-bold text-xl">Recent:</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginHorizontal: wp(5),
+          paddingTop: hp(2),
+          borderBottomWidth: 1,
+        }}>
+        <Text style={{fontWeight: 'bold', fontSize: wp(5), color: 'black'}}>
+          Recent:
+        </Text>
         <XIcon />
       </View>
-      <View className=" ">
+      <View>
         {example.map((item, index) => (
           <View
             key={index}
-            className="flex flex-row justify-between mx-8 pt-5 ">
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginHorizontal: wp(5),
+              paddingTop: hp(2),
+            }}>
             <Pressable
               onPress={() => navigation.navigate('AllCourse', {search: item})}>
-              <Text className="text-black text-xl">{item}</Text>
+              <Text style={{fontSize: RFValue(14), color: 'black'}}>
+                {item}
+              </Text>
             </Pressable>
             <Pressable>
               <XIcon />

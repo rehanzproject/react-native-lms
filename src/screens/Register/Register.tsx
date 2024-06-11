@@ -16,24 +16,30 @@ import Modal from 'react-native-modal';
 import {useDispatch} from 'react-redux';
 import sessionSlice from '../../redux/SessionSlice/SessionSlice';
 import {useHTTP} from '../../hooks/useHTTP';
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 function Register({navigation}: ScreenProps<'Register'>) {
   const [handleModal, setHandleModal] = useState<boolean>(false);
   const dispatch = useDispatch();
   const {postRequest} = useHTTP();
-  const handleClickModal = () => {
-    setHandleModal(!handleModal)
-    navigation.navigate('Login')
-  }
+
   const handleClick = useCallback(
-    async (values: {nim: number; email: string; password: string; confirmPassword: string}) => {
+    async (values: {
+      nim: string;
+      name: string;
+      email: string;
+      password: string;
+      confirmPassword: string;
+    }) => {
       try {
         const result = await postRequest('/user/register', values);
         if (!result?.data) {
           ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
         }
         dispatch(sessionSlice.actions.updateToken(result?.data));
-        navigation.navigate('TabBar');
+        setHandleModal(!handleModal);
       } catch (error) {
         console.log(error);
       }
@@ -43,7 +49,13 @@ function Register({navigation}: ScreenProps<'Register'>) {
 
   return (
     <Formik
-      initialValues={{nim: 0, email: '', password: '', confirmPassword: ''}}
+      initialValues={{
+        nim: '',
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+      }}
       validationSchema={RegisterSchema}
       onSubmit={(values) => handleClick(values)}>
       {({errors, handleChange, handleBlur, handleSubmit, values}) => (
@@ -60,12 +72,22 @@ function Register({navigation}: ScreenProps<'Register'>) {
             <TextInput
               onChangeText={handleChange('nim')}
               onBlur={handleBlur('nim')}
-              value={String(values.nim)}
+              value={values.nim}
               placeholder="eg: 20232053"
               placeholderTextColor={'gray'}
               className="border rounded-lg text-black"
             />
             <Text className="text-black">{errors.nim}</Text>
+            <Text className="text-black text-lg">Name:</Text>
+            <TextInput
+              onChangeText={handleChange('name')}
+              onBlur={handleBlur('name')}
+              value={values.name}
+              placeholderTextColor={'gray'}
+              placeholder="eg: Academade"
+              className="border rounded-lg text-black"
+            />
+            <Text className="text-black">{errors.name}</Text>
             <Text className="text-black text-lg">Email:</Text>
             <TextInput
               onChangeText={handleChange('email')}
@@ -112,16 +134,22 @@ function Register({navigation}: ScreenProps<'Register'>) {
             </Pressable>
           </View>
           <Modal isVisible={handleModal}>
-            <Pressable
-              onPress={()=>handleClickModal()}
-              className="flex justify-center items-center bg-white h-2/5">
-              <View className="">
-                <Image source={require('../../assets/centang.png')} />
-                <Text className="text-black font-extrabold text-2xl">
-                  Successful
-                </Text>
-              </View>
-            </Pressable>
+            <View className="flex justify-center items-center bg-white h-2/5">
+              <Image source={require('../../assets/centang.png')} />
+              <Text className="text-black font-extrabold text-2xl">
+                Successful
+              </Text>
+              <Pressable
+                onPress={() => navigation.navigate('Login')}
+                style={{
+                  paddingVertical: hp(2),
+                  paddingHorizontal: wp(10),
+                  backgroundColor: '#0D6EFD',
+                  borderRadius: 10,
+                }}>
+                <Text style={{color: 'white'}}>Go to Login</Text>
+              </Pressable>
+            </View>
           </Modal>
         </View>
       )}

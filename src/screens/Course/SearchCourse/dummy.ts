@@ -1,1 +1,0 @@
-export const arrDummySearch =['Ui Design', 'Wireframe','Ui Design', 'Wireframe','Ui Design', 'Wireframe','Ui Design', 'Wireframe']

@@ -4,6 +4,7 @@ import {Pressable} from 'react-native';
 import {Text, Dimensions, StyleSheet, View, Image} from 'react-native';
 import {SwiperFlatList} from 'react-native-swiper-flatlist';
 import {ScreenProps} from '../../types';
+import { useWindowDimensions } from 'react-native';
 const arrLanding = [
   {
     image: require('../../assets/image2.png'),
@@ -22,8 +23,8 @@ const arrLanding = [
     text: '',
   },
 ];
-
 const LandingPage = ({navigation}: ScreenProps<'LandingPage'>) => {
+  const deviceWidth = useWindowDimensions().width
   return (
     <View style={styles.container}>
       <SwiperFlatList
@@ -32,7 +33,7 @@ const LandingPage = ({navigation}: ScreenProps<'LandingPage'>) => {
         showPagination
         data={arrLanding}
         paginationStyleItemActive={styles.rounded}
-        paginationActiveColor="blue"
+        paginationActiveColor="#0D6EFD"
         renderItem={({item, index}) => {
           if (index === 3) {
             return (
@@ -47,16 +48,16 @@ const LandingPage = ({navigation}: ScreenProps<'LandingPage'>) => {
                   with
                 </Text>
                 <Pressable
-                  onPress={() => navigation.navigate('Login')}
-                  className="rounded-lg border border-primary-50 bg-primary-50 my-4 py-2 absolute bottom-20 right-1 mx-auto w-96">
-                  <Text className="text-center text-white">Login</Text>
-                </Pressable>
-                <Pressable
-                  onPress={() => navigation.navigate('Register')}
-                  className="absolute bottom-5 rounded-lg border border-primary-50 my-4 py-2 w-96 right-1">
-                  <Text className="text-center text-primary-50">Sign Up</Text>
-                </Pressable>
-              </View>
+              onPress={() => navigation.navigate('Login')}
+              className="rounded-lg border border-primary-50 bg-primary-50 m-4 py-2 absolute bottom-20 w-full">
+              <Text className="text-center text-white">Login</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => navigation.navigate('Register')}
+              className="absolute bottom-5 rounded-lg border border-primary-50 m-4 py-2 w-full">
+              <Text className="text-center text-primary-50">Sign Up</Text>
+            </Pressable>
+          </View>
             );
           } else {
             return (

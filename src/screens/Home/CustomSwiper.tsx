@@ -1,43 +1,97 @@
 import React from 'react';
-import {Text, View, Pressable, Image} from 'react-native';
+import {Text, View, Pressable, Image, StyleSheet} from 'react-native';
 import {SwiperFlatList} from 'react-native-swiper-flatlist';
 import StarIcon from '../../components/atoms/Icons/StarIcon';
 import {makeRupiahValue} from '../../helper/formatter';
 import {IDataCourse} from '../../types';
+import {
+  widthPercentageToDP as wd,
+  heightPercentageToDP as hd,
+} from 'react-native-responsive-screen';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 const CustomSwiper = ({data, navigation}: IDataCourse) => (
-  <View className="flex-1">
+  <View style={styles.container}>
     <SwiperFlatList
       data={data}
+      autoplay={true}
+      autoplayDelay={5000} // Specify the delay in milliseconds (e.g., 5000 milliseconds = 5 seconds)
+      autoplayLoop
       renderItem={({item}) => (
         <Pressable
           onPress={() =>
             navigation.navigate('DetailCourse', {id: item.course_id})
           }
-          style={{width: 150, height: 150}}
-          className="border border-black rounded-lg mr-2 p-1">
+          style={styles.card}>
           <Image
-            source={{
-              uri: item.thumbnail,
-            }}
-            defaultSource={require('../../assets/defaultThumbnail.png')} // Provide the path to your fallback image
-            style={{width: '100%', height: '50%'}}
+            source={
+              item.thumbnail
+                ? {
+                    uri: item.thumbnail,
+                  }
+                : require('../../assets/defaultThumbnailCourse.png')
+            }
+            defaultSource={require('../../assets/defaultThumbnailCourse.png')}
+            style={styles.thumbnail}
             resizeMode="contain"
           />
-          <Text className="text-black text-lg font-bold">{item.name}</Text>
-          <View className="flex flex-row justify-between">
-            <View className="flex flex-row pt-4">
+          <Text style={styles.courseName}>{item.name}</Text>
+          <View style={styles.courseInfo}>
+            <View style={styles.ratingContainer}>
               <StarIcon />
-              <Text className="text-primary-50 pt-1">{item.rating}</Text>
+              <Text style={styles.ratingText}>{item.rating}</Text>
             </View>
-            <Text className="text-black pt-5">
-              {makeRupiahValue(item.price)}
-            </Text>
+            <Text style={styles.priceText}>{makeRupiahValue(item.price)}</Text>
           </View>
         </Pressable>
       )}
     />
   </View>
 );
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  card: {
+    width: wd(40),
+    height: wd(40),
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginRight: wd(2),
+    padding: wd(2),
+  },
+  thumbnail: {
+    width: '100%',
+    height: '50%',
+  },
+  courseName: {
+    fontSize: RFValue(12), // Example using RFValue for responsive font size
+    color: 'black',
+    fontWeight: 'bold',
+    marginTop: hd(1),
+  },
+  courseInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: hd(1),
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ratingText: {
+    fontSize: RFValue(12), // Example using RFValue for responsive font size
+
+    color: '#0D6EFD',
+    marginLeft: wd(1),
+  },
+  priceText: {
+    color: 'black',
+    fontSize: RFValue(12), // Example using RFValue for responsive font size
+  },
+});
 
 export default CustomSwiper;

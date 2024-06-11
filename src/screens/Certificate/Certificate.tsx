@@ -1,30 +1,28 @@
-import {View, Text, Image, Pressable} from 'react-native';
+import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import React from 'react';
 import CustomRoute from '../../components/atoms/CustomRoute/CustomRoute.atom';
-import {ScreenProps} from '../../types';
-import {arrDummyCertificate} from './constant';
+import { ScreenProps } from '../../types';
+import { arrDummyCertificate } from './constant';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
-const Certificate = ({navigation}: ScreenProps<'Certificate'>) => {
+const Certificate = ({ navigation }: ScreenProps<'Certificate'>) => {
   return (
-    <View>
+    <View style={styles.container}>
       <CustomRoute onPress={() => navigation.goBack()} text="My Certificate" />
       {arrDummyCertificate.map((list) => (
-        <View
-          key={list.name}
-          className="m-5 border rounded-lg flex flex-row items-center">
+        <View key={list.name} style={styles.certificateItem}>
           <Image
             source={require('../../assets/course.png')}
-            className="object-cover object-center w-20 h-20 rounded-md m-2  aspect-auto"
+            style={styles.image}
           />
-          <View className="flex">
-            <View className=' flex flex-row justify-between'>
-
-            <Text className="text-xs text-black font-bold">{list.name}</Text>
-            <Text className="text-success-50">Completed</Text>
+          <View style={styles.details}>
+            <View style={styles.detailsHeader}>
+              <Text style={styles.courseName}>{list.name}</Text>
+              <Text style={styles.status}>Completed</Text>
             </View>
-            <View className='flex justify-center items-center p-2'>
-              <Pressable className="bg-primary-50 rounded-lg">
-                <Text className="text-white text-center">See Certificate</Text>
+            <View style={styles.buttonContainer}>
+              <Pressable style={styles.button}>
+                <Text style={styles.buttonText}>See Certificate</Text>
               </Pressable>
             </View>
           </View>
@@ -33,5 +31,59 @@ const Certificate = ({navigation}: ScreenProps<'Certificate'>) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: wp(4),
+  },
+  certificateItem: {
+    margin: wp(5),
+    borderWidth: 1,
+    borderColor: 'lightgray',
+    borderRadius: wp(2),
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: wp(2),
+  },
+  image: {
+    width: wp(20),
+    height: wp(20),
+    borderRadius: wp(2),
+    marginRight: wp(2),
+  },
+  details: {
+    flex: 1,
+  },
+  detailsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: hp(1),
+  },
+  courseName: {
+    fontSize: wp(4),
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  status: {
+    fontSize: wp(3.5),
+    color: 'green',
+  },
+  buttonContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button: {
+    backgroundColor: '#0D6EFD',
+    borderRadius: wp(2),
+    paddingVertical: hp(1),
+    paddingHorizontal: wp(4),
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: wp(3.5),
+    textAlign: 'center',
+  },
+});
 
 export default Certificate;

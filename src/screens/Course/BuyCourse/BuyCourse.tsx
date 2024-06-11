@@ -1,4 +1,11 @@
-import {View, Text, TextInput, Pressable, Image} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  Image,
+  ToastAndroid,
+} from 'react-native';
 import React, {useState} from 'react';
 import {RadioButton} from 'react-native-paper';
 import {ScreenProps} from '../../../types';
@@ -6,30 +13,78 @@ import {dummyCheckout} from './constant';
 import CustomRoute from '../../../components/atoms/CustomRoute/CustomRoute.atom';
 import {makeRupiahValue} from '../../../helper/formatter';
 import Modal from 'react-native-modal';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+import {useFocusEffect} from '@react-navigation/native';
+import {useHTTP} from '../../../hooks/useHTTP';
 
 const BuyCourse = ({route, navigation}: ScreenProps<'BuyCourse'>) => {
   const [handleModal, setHandleModal] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>('');
   const [coupon, setCoupon] = useState<string>('');
   const [text, setText] = useState<string>('');
+  const [data, setData] = useState();
+  const [loading, setLoading] = useState<boolean>();
+  const [totalPrice, setTotalPrice] = useState<number>(
+    route?.params?.price ?? 0,
+  );
+
+  const {getRequest, postRequest} = useHTTP();
+  const onConfirm = async () => {
+    try {
+      const result = await postRequest(
+        `/user/checkout/verify?id=${route.params?.id}&payment_method=${
+          selected ? selected : text ? 'Coupon' : ''
+        }`,
+      );
+      if (!result?.data) {
+        ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
+      }
+      setHandleModal(!handleModal);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const applyCoupon = () => {
-    if (coupon !== route?.params?.coupon) {
+    if (coupon === route?.params?.coupon) {
+      setText('Kupon Benar');
+      setTotalPrice(0);
+    } else {
       setText('Kupon salah');
     }
-    setText('Kupon Benar');
   };
+
   return (
-    <View className="p-2 flex-1">
+    <View style={{flex: 1, padding: wp(2)}}>
       <CustomRoute onPress={() => navigation.goBack()} text="Checkout" />
-      <Text className="text-black font-bold">Select Payment</Text>
+      <Text style={{color: 'black', fontWeight: 'bold'}}>Select Payment</Text>
       {dummyCheckout.map((list) => (
         <View
           key={list.name}
-          className="border rounded-lg flex flex-row justify-between my-2 py-2 ">
-          <View className="flex-row px-2">
-            <Image source={list.icon} className='' />
-            <Text className="font-bold text-black px-2">{list.name}</Text>
+          style={{
+            borderWidth: 1,
+            borderRadius: 10,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginVertical: hp(2),
+            padding: wp(2),
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Image source={list.icon} style={{width: wp(10), height: wp(10)}} />
+            <Text
+              style={{
+                fontWeight: 'bold',
+                color: 'black',
+                paddingHorizontal: wp(2),
+              }}>
+              {list.name}
+            </Text>
           </View>
           <RadioButton.Android
             value={list.name}
@@ -38,52 +93,106 @@ const BuyCourse = ({route, navigation}: ScreenProps<'BuyCourse'>) => {
           />
         </View>
       ))}
-      <View className="flex justify-between relative pt-1">
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          position: 'relative',
+          paddingTop: hp(1),
+        }}>
         <TextInput
-          className="border rounded-lg text-xs text-black"
+          style={{
+            borderWidth: 1,
+            borderRadius: 10,
+            color: 'black',
+            width: wp(70),
+            fontSize: wp(3),
+          }}
           placeholder="take your coupon here..."
           placeholderTextColor={'gray'}
           value={coupon}
           onChangeText={setCoupon}
         />
         <Pressable
-          className="bg-primary-50 absolute right-0 py-2 px-4 mt-2 mr-2 rounded-lg "
+          style={{
+            backgroundColor: '#0D6EFD',
+            position: 'absolute',
+            right: wp(0),
+            top: hp(1),
+            paddingVertical: hp(2),
+            paddingHorizontal: wp(4),
+            borderRadius: 10,
+          }}
           onPress={applyCoupon}>
-          <Text className="text-white">Apply</Text>
+          <Text style={{color: 'white'}}>Apply</Text>
         </Pressable>
       </View>
-      <View className="flex flex-row items-center p-2 my-2 justify-between border rounded-lg">
-        <Text className="text-black font-bold">Total</Text>
-        <Text className="text-black font-bold ">
-          {makeRupiahValue(route?.params?.price ?? 0)}
+      <Text style={{color: 'black'}}>{text}</Text>
+
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          padding: wp(2),
+          marginVertical: hp(2),
+          justifyContent: 'space-between',
+          borderWidth: 1,
+          borderRadius: 10,
+        }}>
+        <Text style={{fontWeight: 'bold', color: 'black'}}>Total</Text>
+        <Text style={{fontWeight: 'bold', color: 'black'}}>
+          {makeRupiahValue(totalPrice)}
         </Text>
       </View>
-      <View className="absolute bottom-0 w-full p-4 ">
+      <View
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          width: '100%',
+          padding: wp(4),
+        }}>
         <Pressable
           onPress={() => {
-            setHandleModal(!handleModal);
+            onConfirm();
           }}
-          className=" bg-primary-50 rounded-lg">
-          <Text className="text-center p-2 text-white">Confirm</Text>
+          style={{backgroundColor: '#0D6EFD', borderRadius: 10}}>
+          <Text style={{color: 'white', textAlign: 'center', padding: wp(2)}}>
+            Confirm
+          </Text>
         </Pressable>
         <Modal isVisible={handleModal}>
           <Pressable
             onPress={() => setHandleModal(!handleModal)}
-            className="flex justify-center items-center bg-white h-2/5">
-            <View className="flex justify-center items-center gap-3">
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'white',
+              height: hp(50),
+            }}>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column',
+              }}>
               <Image source={require('../../../assets/centang.png')} />
-              <Text className="text-black font-extrabold text-2xl">
+              <Text style={{fontWeight: 'bold', fontSize: wp(7)}}>
                 Successful
               </Text>
-              <Text className="text-black text-base">
+              <Text style={{fontSize: wp(4), color: 'black'}}>
                 Your payment request has been{' '}
               </Text>
-              <Text className="text-black text-base">successful</Text>
-
+              <Text style={{fontSize: wp(4), color: 'black'}}>successful</Text>
               <Pressable
                 onPress={() => navigation.navigate('Home')}
-                className="py-2 rounded-md px-10 bg-primary-50">
-                <Text className="text-white text-c">Go to Home</Text>
+                style={{
+                  paddingVertical: hp(2),
+                  paddingHorizontal: wp(10),
+                  backgroundColor: '#0D6EFD',
+                  borderRadius: 10,
+                }}>
+                <Text style={{color: 'white'}}>Go to Home</Text>
               </Pressable>
             </View>
           </Pressable>

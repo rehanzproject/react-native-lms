@@ -1,22 +1,23 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback} from 'react';
 import {
   Pressable,
   Text,
   TextInput,
   ToastAndroid,
-  TouchableOpacity,
   View,
+  StyleSheet,
+  Dimensions,
 } from 'react-native';
 import {ScreenProps} from '../../types';
 import {Formik} from 'formik';
 import {useHTTP} from '../../hooks/useHTTP';
-import {useDispatch} from 'react-redux';
-import sessionSlice from '../../redux/SessionSlice/SessionSlice';
 import {ForgotPasswordValidation} from './validation';
-
+import {
+  widthPercentageToDP as wd,
+  heightPercentageToDP as hd,
+} from 'react-native-responsive-screen';
 function ForgotPassword({navigation}: ScreenProps<'ForgotPassword'>) {
   const {postRequest} = useHTTP();
-  const dispatch = useDispatch();
   const onSubmit = useCallback(async (values: {email: string}) => {
     try {
       // const result = await postRequest('/user/forgot-password', values);
@@ -28,38 +29,37 @@ function ForgotPassword({navigation}: ScreenProps<'ForgotPassword'>) {
       console.log(error);
     }
   }, []);
+
   return (
     <Formik
       initialValues={{email: ''}}
       validationSchema={ForgotPasswordValidation}
       onSubmit={(values) => onSubmit(values)}>
       {({errors, handleChange, handleBlur, handleSubmit, values}) => (
-        <View className="flex-1 justify-center items-center">
-          <View className="flex text-center">
-            <Text className="text-2xl text-black font-bold pb-8 text-center">
-              Forgot Password
-            </Text>
-            <Text className="text-black">
-              Enter your email, address to get an OTP code to reset you
+        <View style={styles.container}>
+          <View style={styles.innerContainer}>
+            <Text style={styles.title}>Forgot Password</Text>
+            <Text style={styles.instructionText}>
+              Enter your email address to get an OTP code to reset your
               password.
             </Text>
 
-            <Text className="text-black text-lg">Email</Text>
+            <Text style={styles.labelText}>Email</Text>
             <TextInput
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
               value={values.email}
               placeholderTextColor={'gray'}
               placeholder="Email:"
-              className="border rounded-lg text-black"
+              style={styles.input}
             />
-            <Text className="text-black">{errors.email}</Text>
+            {errors.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
+            )}
           </View>
-          <View className="absolute bottom-0 w-80">
-            <Pressable
-              onPress={() => handleSubmit()}
-              className="rounded-lg bg-primary-50 py-2 mb-2">
-              <Text className="text-center text-white text-lg">Continue</Text>
+          <View style={styles.buttonContainer}>
+            <Pressable onPress={() => handleSubmit()} style={styles.button}>
+              <Text style={styles.buttonText}>Continue</Text>
             </Pressable>
           </View>
         </View>
@@ -67,5 +67,70 @@ function ForgotPassword({navigation}: ScreenProps<'ForgotPassword'>) {
     </Formik>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: wd(4), // 4% of the screen width
+  },
+  innerContainer: {
+    width: '100%',
+    maxWidth: wd(90), // 90% of the screen width
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: wd(6), // 6% of the screen width
+    color: 'black',
+    fontWeight: 'bold',
+    paddingBottom: hd(2), // 2% of the screen height
+    textAlign: 'center',
+  },
+  instructionText: {
+    fontSize: wd(4), // 4% of the screen width
+    color: 'black',
+    textAlign: 'center',
+    marginBottom: hd(3), // 3% of the screen height
+  },
+  labelText: {
+    fontSize: wd(4.5), // 4.5% of the screen width
+    color: 'black',
+    marginBottom: hd(1), // 1% of the screen height
+    textAlign: 'left',
+  },
+  input: {
+    width: '100%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: wd(3), // 3% of the screen width
+    fontSize: wd(4), // 4% of the screen width
+    color: 'black',
+    marginBottom: hd(1), // 1% of the screen height
+  },
+  errorText: {
+    color: 'red',
+    fontSize: wd(3.5), // 3.5% of the screen width
+    marginBottom: hd(1), // 1% of the screen height
+  },
+  buttonContainer: {
+    width: '100%',
+    paddingHorizontal: wd(4), // 4% of the screen width
+    position: 'absolute',
+    bottom: hd(2), // 2% of the screen height
+  },
+  button: {
+    backgroundColor: '#3498db',
+    paddingVertical: hd(1.5), // 1.5% of the screen height
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: wd(4.5), // 4.5% of the screen width
+  },
+});
 
 export default ForgotPassword;
