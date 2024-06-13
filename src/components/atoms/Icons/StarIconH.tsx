@@ -1,9 +1,9 @@
 import * as React from 'react';
 import Svg, {Path} from 'react-native-svg';
 
-function StarIcon() {
+function StarIconH() {
   return (
-    <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+    <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -14,4 +14,4 @@ function StarIcon() {
   );
 }
 
-export default StarIcon;
+export default StarIconH;

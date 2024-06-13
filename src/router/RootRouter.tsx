@@ -28,15 +28,15 @@ import ChangePassword from '../screens/ChangePassword/ChangePassword';
 import Verification from '../screens/VerificationOTP/Verif';
 import Material from '../screens/Material/Material';
 import DownloadCertificate from '../screens/Certificate/DownloadCertificate';
-
 function TabBar() {
   const Tab = createBottomTabNavigator<RootStackParamList>();
 
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      screenOptions={{headerShown: false}}
-      tabBar={(props) => <MyTabBar {...props} />}>
+      screenOptions={{ headerShown: false }}
+      tabBar={(props) => <MyTabBar {...props} />}
+    >
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="MyCourse" component={MyCourse} />
       <Tab.Screen name="History" component={History} />
@@ -44,14 +44,14 @@ function TabBar() {
     </Tab.Navigator>
   );
 }
-
-function RootRouter(){
+function RootRouter() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   return (
     <NavigationContainer>
       <Stack.Navigator
-        screenOptions={{headerShown: false}}
-        initialRouteName="TabBar">
+        screenOptions={{ headerShown: false }}
+        initialRouteName="LandingPage"
+      >
         <Stack.Screen name="TabBar" component={TabBar} />
         <Stack.Screen name="LandingPage" component={LandingPage} />
         <Stack.Screen name="Register" component={Register} />
@@ -73,10 +73,11 @@ function RootRouter(){
         <Stack.Screen name="Search" component={Search} />
         <Stack.Screen name="Material" component={Material} />
         <Stack.Screen name="DownloadCertificate" component={DownloadCertificate} />
-       
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
+
 
 export default RootRouter;

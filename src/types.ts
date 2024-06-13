@@ -3,7 +3,6 @@ import {
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import {ReactNode} from 'react';
-import {string} from 'yup';
 
 export type RootStackParamList = {
   LandingPage: undefined;
@@ -34,7 +33,7 @@ export type RootStackParamList = {
   BuyCourse: undefined | {id: string; price: number; coupon: string};
   ChangePassword: undefined;
   Verification: undefined;
-  DownloadCertificate: undefined;
+  DownloadCertificate: undefined | {id: string};
   // Define other screens if you have them
 };
 
@@ -99,21 +98,24 @@ export interface HistoryItem {
   updatedAt: string;
   payment_method: string;
 }
-export interface CourseItem {
-  data: {
-    coupon: string;
-    course_id: string;
-    name: string;
-    thumbnail: string;
-    description: string;
-    price: number;
-    rating1?: number;
-    rating2?: number;
-    rating3?: number;
-    rating4?: number;
-    rating5?: number;
-    modules: Array<{module_id: string; name: string}>;
-  };
+
+export interface Course {
+  coupon: string;
+  course_id: string;
+  name: string;
+  thumbnail: string;
+  description: string;
+  price: number;
+  rating: number;
+  rating1?: number;
+  rating2?: number;
+  rating3?: number;
+  rating4?: number;
+  rating5?: number;
+  modules: Array<{module_id: string; name: string}>;
+}
+export interface CourseItem extends Course {
+  data: Course
 }
 export interface QuizData {
   module_id: string;

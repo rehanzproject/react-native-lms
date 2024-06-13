@@ -1,4 +1,4 @@
-import {View, Text, Image, ScrollView, ToastAndroid} from 'react-native';
+import {View, Text, Image, ScrollView, RefreshControl, ToastAndroid, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {
@@ -8,13 +8,15 @@ import {
 import {useHTTP} from '../../hooks/useHTTP';
 import {ScreenProps} from '../../types';
 import CustomRoute from '../../components/atoms/CustomRoute/CustomRoute.atom';
-import {TouchableOpacity} from 'react-native';
 import CheckIcon from '../../components/atoms/Icons/CheckIcon';
+import {useToken} from '../../redux/SessionSlice/useSessionSelector';
 
 const Material = ({route, navigation}: ScreenProps<'Material'>) => {
-  const {getRequest, postRequest} = useHTTP();
+  const token = useToken();
+  const {getRequest, postRequest} = useHTTP(token);
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any>();
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const getSearchCompletion = async () => {
     try {
@@ -32,18 +34,35 @@ const Material = ({route, navigation}: ScreenProps<'Material'>) => {
     }
   };
 
+  const onRefresh = async () => {
+    setData({})
+    setRefreshing(true);
+    await getSearchCompletion();
+    setRefreshing(false);
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       getSearchCompletion();
-    }, []),
+    }, [token]),
   );
 
   return (
-    <ScrollView contentContainerStyle={{flexGrow: 1}}>
+    <ScrollView
+      contentContainerStyle={{flexGrow: 1}}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <CustomRoute onPress={() => navigation.goBack()} text="Material" />
       <Image
-        source={{uri: data?.course?.thumbnail}}
+        source={
+          data?.course?.thumbnail
+            ? {uri: data?.course?.thumbnail}
+            : require('../../assets/defaultThumbnailCourse.png')
+        }
         style={{width: '100%', aspectRatio: 16 / 9, borderRadius: wp(5)}}
+        resizeMode="contain"
       />
       <Text
         style={{
@@ -62,8 +81,10 @@ const Material = ({route, navigation}: ScreenProps<'Material'>) => {
         }}></View>
 
       <View>
-        {data?.course?.modules?.map((list, index) => (
+        {data?.course?.modules?.map((list: any) => {
+          return (
           <TouchableOpacity
+            key={list.module_id}
             style={{
               borderWidth: 1,
               borderRadius: 12,
@@ -84,13 +105,12 @@ const Material = ({route, navigation}: ScreenProps<'Material'>) => {
                 fontSize: wp(4),
                 fontWeight: 'bold',
                 color: 'black',
-              }}
-              key={index}>
+              }}>
               {list.name}
             </Text>
             {list.is_completed && <CheckIcon />}
           </TouchableOpacity>
-        ))}
+        )})}
       </View>
     </ScrollView>
   );

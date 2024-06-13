@@ -19,6 +19,7 @@ import {
 } from 'react-native-responsive-screen';
 import {useFocusEffect} from '@react-navigation/native';
 import {useHTTP} from '../../../hooks/useHTTP';
+import {useToken} from '../../../redux/SessionSlice/useSessionSelector';
 
 const BuyCourse = ({route, navigation}: ScreenProps<'BuyCourse'>) => {
   const [handleModal, setHandleModal] = useState<boolean>(false);
@@ -30,8 +31,8 @@ const BuyCourse = ({route, navigation}: ScreenProps<'BuyCourse'>) => {
   const [totalPrice, setTotalPrice] = useState<number>(
     route?.params?.price ?? 0,
   );
-
-  const {getRequest, postRequest} = useHTTP();
+  const token = useToken();
+  const {getRequest, postRequest} = useHTTP(token);
   const onConfirm = async () => {
     try {
       const result = await postRequest(

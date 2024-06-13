@@ -1,10 +1,14 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {Pressable} from 'react-native';
+import {Pressable, useWindowDimensions} from 'react-native';
 import {Text, Dimensions, StyleSheet, View, Image} from 'react-native';
 import {SwiperFlatList} from 'react-native-swiper-flatlist';
 import {ScreenProps} from '../../types';
-import { useWindowDimensions } from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+
 const arrLanding = [
   {
     image: require('../../assets/image2.png'),
@@ -23,8 +27,9 @@ const arrLanding = [
     text: '',
   },
 ];
+
 const LandingPage = ({navigation}: ScreenProps<'LandingPage'>) => {
-  const deviceWidth = useWindowDimensions().width
+  const deviceWidth = useWindowDimensions().width;
   return (
     <View style={styles.container}>
       <SwiperFlatList
@@ -48,16 +53,16 @@ const LandingPage = ({navigation}: ScreenProps<'LandingPage'>) => {
                   with
                 </Text>
                 <Pressable
-              onPress={() => navigation.navigate('Login')}
-              className="rounded-lg border border-primary-50 bg-primary-50 m-4 py-2 absolute bottom-20 w-full">
-              <Text className="text-center text-white">Login</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => navigation.navigate('Register')}
-              className="absolute bottom-5 rounded-lg border border-primary-50 m-4 py-2 w-full">
-              <Text className="text-center text-primary-50">Sign Up</Text>
-            </Pressable>
-          </View>
+                  onPress={() => navigation.navigate('Login')}
+                  style={[styles.button, styles.loginButton]}>
+                  <Text style={styles.buttonText}>Login</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => navigation.navigate('Register')}
+                  style={[styles.button, styles.signUpButton]}>
+                  <Text style={[styles.buttonText, styles.signUpButtonText]}>Sign Up</Text>
+                </Pressable>
+              </View>
             );
           } else {
             return (
@@ -80,20 +85,44 @@ const LandingPage = ({navigation}: ScreenProps<'LandingPage'>) => {
 const {width} = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: 'white'},
-  child: {width, justifyContent: 'center'},
+  child: {width, justifyContent: 'center', alignItems: 'center'},
   rounded: {width: 30},
   imageContainer: {
-    width: '75%',
-    height: '50%',
+    width: wp('75%'),
+    height: hp('50%'),
     justifyContent: 'center',
     alignItems: 'center',
   },
   text: {
-    fontSize: 17,
+    fontSize: wp('4%'),
     textAlign: 'center',
     fontWeight: 'bold',
     fontStyle: 'normal',
     color: 'black',
+    marginVertical: hp('2%'),
+  },
+  button: {
+    width: wp('80%'),
+    paddingVertical: hp('1.5%'),
+    borderRadius: wp('2%'),
+    alignItems: 'center',
+    marginVertical: hp('1%'),
+  },
+  loginButton: {
+    backgroundColor: '#0D6EFD',
+    borderColor: '#0D6EFD',
+  },
+  signUpButton: {
+    borderColor: '#0D6EFD',
+    borderWidth: 1,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: wp('4%'),
+    textAlign: 'center',
+  },
+  signUpButtonText: {
+    color: '#0D6EFD',
   },
 });
 

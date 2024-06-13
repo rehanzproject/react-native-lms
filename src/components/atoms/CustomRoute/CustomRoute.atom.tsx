@@ -2,6 +2,7 @@ import {View, Text, Pressable, StyleSheet} from 'react-native';
 import React from 'react';
 import ArrowIcon from '../Icons/ArrowIcon';
 import { widthPercentageToDP as wd } from 'react-native-responsive-screen';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 export default function CustomRoute({
   text,
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
   },
   text: {
     flex: 1,
-    fontSize: wd(5),
+    fontSize: RFValue(18),
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'black',

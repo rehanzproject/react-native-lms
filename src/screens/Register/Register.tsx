@@ -3,6 +3,7 @@ import {
   Button,
   Image,
   Pressable,
+  ScrollView,
   Text,
   TextInput,
   ToastAndroid,
@@ -20,10 +21,13 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import { useToken } from '../../redux/SessionSlice/useSessionSelector';
+
 function Register({navigation}: ScreenProps<'Register'>) {
   const [handleModal, setHandleModal] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const {postRequest} = useHTTP();
+  const token = useToken()
+  const {postRequest} = useHTTP(token);
 
   const handleClick = useCallback(
     async (values: {
@@ -59,46 +63,70 @@ function Register({navigation}: ScreenProps<'Register'>) {
       validationSchema={RegisterSchema}
       onSubmit={(values) => handleClick(values)}>
       {({errors, handleChange, handleBlur, handleSubmit, values}) => (
-        <View>
-          <View className="p-12 justify-center">
-            <View className="flex flex-row ">
-              <Text className="text-2xl text-black font-bold pr-4 pb-8">
+        <ScrollView contentContainerStyle={{flexGrow: 1}}>
+          <View style={{padding: wp(10), justifyContent: 'center'}}>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={{fontSize: wp(6),color:'black', fontWeight: 'bold', paddingRight: wp(2), paddingBottom: hp(2)}}>
                 Sign Up
               </Text>
               <HandIcon />
             </View>
 
-            <Text className="text-black text-lg">Nim</Text>
+            <Text style={{fontSize: wp(4), color: 'black'}}>Nim</Text>
             <TextInput
               onChangeText={handleChange('nim')}
               onBlur={handleBlur('nim')}
               value={values.nim}
               placeholder="eg: 20232053"
               placeholderTextColor={'gray'}
-              className="border rounded-lg text-black"
+              style={{
+                borderColor: 'gray',
+                borderWidth: 1,
+                borderRadius: wp(2),
+                color: 'black',
+                paddingHorizontal: wp(4),
+                marginBottom: hp(1),
+              }}
             />
-            <Text className="text-black">{errors.nim}</Text>
-            <Text className="text-black text-lg">Name:</Text>
+            <Text style={{color: 'black'}}>{errors.nim}</Text>
+
+            <Text style={{fontSize: wp(4), color: 'black'}}>Name:</Text>
             <TextInput
               onChangeText={handleChange('name')}
               onBlur={handleBlur('name')}
               value={values.name}
               placeholderTextColor={'gray'}
               placeholder="eg: Academade"
-              className="border rounded-lg text-black"
+              style={{
+                borderColor: 'gray',
+                borderWidth: 1,
+                borderRadius: wp(2),
+                color: 'black',
+                paddingHorizontal: wp(4),
+                marginBottom: hp(1),
+              }}
             />
-            <Text className="text-black">{errors.name}</Text>
-            <Text className="text-black text-lg">Email:</Text>
+            <Text style={{color: 'black'}}>{errors.name}</Text>
+
+            <Text style={{fontSize: wp(4), color: 'black'}}>Email:</Text>
             <TextInput
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
               value={values.email}
               placeholderTextColor={'gray'}
               placeholder="contoh@gmail.com"
-              className="border rounded-lg text-black"
+              style={{
+                borderColor: 'gray',
+                borderWidth: 1,
+                borderRadius: wp(2),
+                color: 'black',
+                paddingHorizontal: wp(4),
+                marginBottom: hp(1),
+              }}
             />
-            <Text className="text-black">{errors.email}</Text>
-            <Text className="text-black text-lg">Password :</Text>
+            <Text style={{color: 'black'}}>{errors.email}</Text>
+
+            <Text style={{fontSize: wp(4), color: 'black'}}>Password:</Text>
             <TextInput
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}
@@ -106,10 +134,18 @@ function Register({navigation}: ScreenProps<'Register'>) {
               placeholder="*********"
               placeholderTextColor={'gray'}
               secureTextEntry
-              className="border rounded-lg text-black"
+              style={{
+                borderColor: 'gray',
+                borderWidth: 1,
+                borderRadius: wp(2),
+                color: 'black',
+                paddingHorizontal: wp(4),
+                marginBottom: hp(1),
+              }}
             />
-            <Text className="text-black">{errors.password}</Text>
-            <Text className="text-black text-lg">Confim Password:</Text>
+            <Text style={{color: 'black'}}>{errors.password}</Text>
+
+            <Text style={{fontSize: wp(4), color: 'black'}}>Confirm Password:</Text>
             <TextInput
               onChangeText={handleChange('confirmPassword')}
               onBlur={handleBlur('confirmPassword')}
@@ -117,26 +153,47 @@ function Register({navigation}: ScreenProps<'Register'>) {
               placeholder="*********"
               placeholderTextColor={'gray'}
               secureTextEntry
-              className="border rounded-lg text-black"
+              style={{
+                borderColor: 'gray',
+                borderWidth: 1,
+                borderRadius: wp(2),
+                color: 'black',
+                paddingHorizontal: wp(4),
+                marginBottom: hp(1),
+              }}
             />
-            <Text className="text-black">{errors.confirmPassword}</Text>
+            <Text style={{color: 'black'}}>{errors.confirmPassword}</Text>
+
             <Pressable
               onPress={() => handleSubmit()}
-              className="rounded-lg bg-primary-50 my-4 py-2 text-lg">
-              <Text className="text-center text-white text-base">Submit</Text>
+              style={{
+                borderRadius: wp(2),
+                backgroundColor: '#0D6EFD',
+                marginVertical: hp(2),
+                paddingVertical: hp(1.5),
+              }}>
+              <Text style={{textAlign: 'center', color: 'white', fontSize: wp(4)}}>
+                Submit
+              </Text>
             </Pressable>
             <Pressable
               onPress={() => navigation.navigate('Login')}
-              className="rounded-lg border my-4 py-2">
-              <Text className="text-center text-primary-50 text-base">
-                Already have an account ,Sign In
+              style={{
+                borderRadius: wp(2),
+                borderColor: '#0D6EFD',
+                borderWidth: 1,
+                marginVertical: hp(2),
+                paddingVertical: hp(1.5),
+              }}>
+              <Text style={{textAlign: 'center', color: '#0D6EFD', fontSize: wp(4)}}>
+                Already have an account, Sign In
               </Text>
             </Pressable>
           </View>
           <Modal isVisible={handleModal}>
-            <View className="flex justify-center items-center bg-white h-2/5">
+            <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '40%'}}>
               <Image source={require('../../assets/centang.png')} />
-              <Text className="text-black font-extrabold text-2xl">
+              <Text style={{color: 'black', fontWeight: 'bold', fontSize: wp(6)}}>
                 Successful
               </Text>
               <Pressable
@@ -151,7 +208,7 @@ function Register({navigation}: ScreenProps<'Register'>) {
               </Pressable>
             </View>
           </Modal>
-        </View>
+        </ScrollView>
       )}
     </Formik>
   );

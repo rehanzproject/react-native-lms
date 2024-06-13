@@ -6,10 +6,13 @@ import {
   StyleSheet,
   TextInput,
   ToastAndroid,
+  ScrollView,
+  RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import CustomRoute from '../../components/atoms/CustomRoute/CustomRoute.atom';
-import {CourseItem, ScreenProps} from '../../types';
+import {ScreenProps} from '../../types';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -19,29 +22,51 @@ import EmptyStarIcon from '../../components/atoms/Icons/EmptyStarIcon';
 import FilledStarIcon from '../../components/atoms/Icons/FIlledStarIcon';
 import {useFocusEffect} from '@react-navigation/native';
 import {useHTTP} from '../../hooks/useHTTP';
+import {useToken} from '../../redux/SessionSlice/useSessionSelector';
 import { MainType } from './dummy';
+import { RFValue } from 'react-native-responsive-fontsize';
 
-export default function CompleteCourse({
-  navigation,
-  route,
-}: ScreenProps<'CompleteCourse'>) {
+export default function CompleteCourse({navigation, route}: ScreenProps<'CompleteCourse'>) {
+  const token = useToken();
+  const {getRequest, postRequest} = useHTTP(token);
   const [handleModal, setHandleModal] = useState(false);
   const [rating, setRating] = useState(0);
-  const [course, setCourse] = useState<MainType[]>();
-  const [loading, setLoading] = useState<boolean>();
+  const [course, setCourse] = useState<MainType[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [description, setDescription] = useState<string>('');
-
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const {getRequest, postRequest} = useHTTP();
+  const onRefresh = useCallback(() => {
+    setCourse([]);
+    setRefreshing(true);
+    getCourse();
+  }, [token]);
 
   useFocusEffect(
     React.useCallback(() => {
       getCourse();
-    }, []),
+    }, [token]),
   );
 
+  const getCourse = async () => {
+    try {
+      const result = await getRequest('/user/course/completed');
+      if (!result?.data) {
+        ToastAndroid.show(result?.statusText as string, ToastAndroid.LONG);
+      } else {
+        setCourse(result.data);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
   const onSubmit = async () => {
+    setLoading(true);
     try {
       const result = await postRequest(`/user/review?id=${selectedCourseId}`, {
         rating,
@@ -49,23 +74,10 @@ export default function CompleteCourse({
       });
       if (!result?.data) {
         ToastAndroid.show(result?.statusText as string, ToastAndroid.LONG);
+      } else {
+        setHandleModal(false);
+        navigation.navigate('DownloadCertificate', {id: selectedCourseId ?? ''});
       }
-      setHandleModal(false);
-      navigation.navigate('DownloadCertificate');
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getCourse = async () => {
-    try {
-      const result = await getRequest('/user/course/completed');
-      if (!result?.data) {
-        ToastAndroid.show(result?.statusText as string, ToastAndroid.LONG);
-      }
-      setCourse(result.data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -93,32 +105,47 @@ export default function CompleteCourse({
           <Text style={styles.tabTextActive}>Complete</Text>
         </Pressable>
       </View>
-
-      <View style={styles.courseContainer}>
-        {course?.map((list) => (
-          <View key={list.course.course_id} style={styles.courseItem}>
-            <Image
-              source={list?.course?.thumbnail ? {uri: list?.course?.thumbnail} : require('../../assets/defaultThumbnailCourse.png')}
-              style={styles.courseImage}
-            />
-            <View style={styles.courseDetails}>
-              <Text style={styles.courseName}>{list.course.name}</Text>
-              <View style={styles.progressContainer}>
-                {/* <Text style={styles.progressText}>
-                  {list.total} / {list.total} lessons
-                </Text> */}
-                <Text style={styles.completeText}>Complete</Text>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0D6EFD" />
+      ) : course.length === 0 ? (
+        <View style={styles.noCourseContainer}>
+          <Text style={styles.noCourseText}>No Certificate Found</Text>
+        </View>
+      ) : (
+        <ScrollView
+          style={{flex: 1}}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          <View style={styles.courseContainer}>
+            {course.map((list) => (
+              <View key={list.course.course_id} style={styles.courseItem}>
+                <Image
+                  source={
+                    list?.course?.thumbnail
+                      ? {uri: list?.course?.thumbnail}
+                      : require('../../assets/defaultThumbnailCourse.png')
+                  }
+                  style={styles.courseImage}
+                />
+                <View style={styles.courseDetails}>
+                  <Text style={styles.courseName}>{list.course.name}</Text>
+                  <View style={styles.progressContainer}>
+                    <Text style={styles.completeText}>Complete</Text>
+                  </View>
+                  <Pressable
+                    onPress={() => openModal(list.course.course_id)}
+                    style={styles.certificateButton}
+                  >
+                    <Text style={styles.buttonText}>See Certificate</Text>
+                  </Pressable>
+                </View>
               </View>
-              <Pressable
-                onPress={() => openModal(list.course.course_id)}
-                style={styles.certificateButton}>
-                <Text style={styles.buttonText}>See Certificate</Text>
-              </Pressable>
-            </View>
+            ))}
           </View>
-        ))}
-      </View>
-
+        </ScrollView>
+      )}
       <Modal isVisible={handleModal}>
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>Review Course</Text>
@@ -137,12 +164,16 @@ export default function CompleteCourse({
             onChangeText={setDescription}
             placeholder="Your Review here..."
             placeholderTextColor={'gray'}
+            maxLength={100}
           />
-          <Text style={styles.characterCount}>{description?.length} / 100</Text>
+          <Text style={styles.characterCount}>
+            {description?.length} / 100
+          </Text>
           <View style={styles.buttonContainer}>
             <Pressable
               onPress={() => setHandleModal(false)}
-              style={styles.laterButton}>
+              style={styles.laterButton}
+            >
               <Text style={styles.laterButtonText}>Maybe Later</Text>
             </Pressable>
             <Pressable onPress={onSubmit} style={styles.submitButton}>
@@ -175,6 +206,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#0D6EFD',
   },
+  noCourseContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  noCourseText: {
+    marginTop: hp(2),
+    color: 'gray',
+    fontSize: wp(4),
+  },
   courseContainer: {
     flex: 1,
   },
@@ -206,10 +246,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: hp(1),
-  },
-  progressText: {
-    fontSize: wp(3.5),
-    color: 'black',
   },
   completeText: {
     fontSize: wp(3.5),
@@ -272,6 +308,9 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: wp(3.5),
     marginBottom: hp(1),
+    
+    right:0,
+
   },
   buttonContainer: {
     flexDirection: 'row',

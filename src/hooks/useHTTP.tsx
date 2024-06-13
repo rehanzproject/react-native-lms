@@ -1,27 +1,13 @@
 import axios, {AxiosRequestConfig, AxiosError} from 'axios';
-import {useSelector} from 'react-redux';
-import {ImageType, SessionType} from '../types';
+import {ImageType} from '../types';
 import {ToastAndroid} from 'react-native';
-import { useEffect, useState } from 'react';
 
-export const useHTTP = () => {
-  const tokenFromState = useSelector((state: SessionType) => state.session.token);
-  const [token, setToken] = useState(tokenFromState);
-
-  useEffect(() => {
-    setToken(tokenFromState);
-  }, [tokenFromState]);
- 
-  const API_URL = 'https://89e2-36-71-68-163.ngrok-free.app/api/v1';
-  // Handle and process errors
+export const useHTTP = (token: string) => {
+  const API_URL = 'https://secondly-suited-fawn.ngrok-free.app/api/v1';
   const processError = (error: any) => {
     if (error.response) {
-      // Server responded with a status other than 200 range
       console.error('Server Error:', error.response.data);
-      ToastAndroid.show(
-        'Server Error: ' + error.response.data.message,
-        ToastAndroid.SHORT,
-      );
+      ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
     } else if (error.request) {
       // Request was made but no response received
       console.error('Network Error:', error.request);
@@ -42,7 +28,7 @@ export const useHTTP = () => {
       const config: AxiosRequestConfig = {
         headers: {
           authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       };
       const formData = new FormData();
@@ -72,7 +58,7 @@ export const useHTTP = () => {
     }
   };
 
-  const getRequest = async (url: string ) => {
+  const getRequest = async (url: string) => {
     try {
       const config: AxiosRequestConfig = {
         headers: {
@@ -87,7 +73,7 @@ export const useHTTP = () => {
     }
   };
 
-  const postRequest = async (url: string, value?: any)  => {
+  const postRequest = async (url: string, value?: any) => {
     try {
       const config: AxiosRequestConfig = {
         headers: {
@@ -102,7 +88,7 @@ export const useHTTP = () => {
     }
   };
 
-  const updateRequest = async (url: string, value: any, ) => {
+  const updateRequest = async (url: string, value: any) => {
     try {
       const config: AxiosRequestConfig = {
         headers: {
@@ -117,7 +103,7 @@ export const useHTTP = () => {
     }
   };
 
-  const deleteRequest = async (url: string, ) => {
+  const deleteRequest = async (url: string) => {
     try {
       const config: AxiosRequestConfig = {
         headers: {

@@ -13,16 +13,19 @@ import {RadioButton} from 'react-native-paper';
 import {quizDummy} from './dummy';
 import {useFocusEffect} from '@react-navigation/native';
 import {useHTTP} from '../../hooks/useHTTP';
+import { useToken } from '../../redux/SessionSlice/useSessionSelector';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 const Quiz = ({route, navigation}: ScreenProps<'Quiz'>) => {
+  const token = useToken()
   const [quizData, setQuizData] = useState<QuizData>();
   const [loading, setLoading] = useState(true);
-  const {getRequest , postRequest} = useHTTP();
+  const {getRequest , postRequest} = useHTTP(token);
 
   useFocusEffect(
     React.useCallback(() => {
       getHistoryData();
-    }, []),
+    }, [token]),
   );
 
   const getHistoryData = async () => {
@@ -40,7 +43,6 @@ const Quiz = ({route, navigation}: ScreenProps<'Quiz'>) => {
       setLoading(false);
     }
   };
-console.log(route.params);
 
   interface SelectedAnswers {
     [questionIndex: number]: number;
@@ -72,7 +74,7 @@ console.log(route.params);
         }
       });
   
-      const scorePercentage = (correctAnswers / quizData?.data?.quizzes?.length) * 100;
+      const scorePercentage = (correctAnswers / (quizData?.data?.quizzes?.length ?? 0)) * 100;
       console.log('Calculated Score Percentage:', scorePercentage);
       
       setScore(scorePercentage); // Update the score state
@@ -85,8 +87,9 @@ console.log(route.params);
       if (!result?.data) {
         ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
       }
-      setQuizData(result?.data);
-      navigation.goBack()
+      console.log(result);
+      navigation.navigate('Material', {id: route.params?.course_id ?? ''})
+      
     } catch (error) {
       console.error(error);
     } finally {
@@ -147,7 +150,7 @@ const styles = StyleSheet.create({
   },
   questionText: {
     color: 'black',
-    fontSize: 16,
+    fontSize: RFValue(16),
     fontWeight: 'bold',
     marginBottom: 5,
   },
@@ -157,7 +160,7 @@ const styles = StyleSheet.create({
   },
   choiceText: {
     color: 'black',
-    fontSize: 14,
+    fontSize: RFValue(14),
   },
   submitButtonContainer: {
     position: 'absolute',
@@ -174,7 +177,7 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: RFValue(16),
     fontWeight: 'bold',
   },
   scoreContainer: {
@@ -182,7 +185,7 @@ const styles = StyleSheet.create({
   },
   scoreText: {
     color: 'black',
-    fontSize: 16,
+    fontSize: RFValue(16),
     fontWeight: 'bold',
   },
 });

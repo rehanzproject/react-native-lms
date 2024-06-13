@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -5,21 +6,24 @@ import {
   ScrollView,
   StyleSheet,
   ToastAndroid,
+  Dimensions,
 } from 'react-native';
-import React, {useState} from 'react';
 import CustomRoute from '../../components/atoms/CustomRoute/CustomRoute.atom';
-import {ScreenProps} from '../../types';
+import { ScreenProps } from '../../types';
 import {
   widthPercentageToDP as wd,
   heightPercentageToDP as hd,
 } from 'react-native-responsive-screen';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import Video from 'react-native-video';
-import {useFocusEffect} from '@react-navigation/native';
-import {useHTTP} from '../../hooks/useHTTP';
+import { useFocusEffect } from '@react-navigation/native';
+import { useHTTP } from '../../hooks/useHTTP';
+import { useToken } from '../../redux/SessionSlice/useSessionSelector';
+import RenderHTML from 'react-native-render-html';
 
-const Lesson = ({route, navigation}: ScreenProps<'Lesson'>) => {
-  const {getRequest} = useHTTP();
+const Lesson = ({ route, navigation }: ScreenProps<'Lesson'>) => {
+  const token = useToken();
+  const { getRequest } = useHTTP(token);
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any>();
 
@@ -42,31 +46,36 @@ const Lesson = ({route, navigation}: ScreenProps<'Lesson'>) => {
   useFocusEffect(
     React.useCallback(() => {
       getModules();
-    }, []),
+    }, [token]),
   );
 
   const renderDescription = (description: string) => {
-    return description.split('\n').map((line, index) => (
-      <Text key={index}>
-        {line}
-        {index < description.split('\n').length - 1 && '\n'}
-      </Text>
-    ));
+    const source = {
+      html: description,
+    };
+
+    return (
+      <RenderHTML
+        contentWidth={Dimensions.get('window').width}
+        source={source}
+        tagsStyles={htmlStyles}
+      />
+    );
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <CustomRoute onPress={() => navigation.goBack()} text="Lessons" />
       <Video
-        source={{uri: data?.video}} // Replace with your video URL
+        source={{ uri: data?.video }} // Replace with your video URL
         style={styles.video}
         controls={true}
         resizeMode="cover"
       />
       <Text style={styles.title}>Description</Text>
-      <Text style={styles.description}>
+      <View style={styles.description}>
         {data?.description && renderDescription(data.description)}
-      </Text>
+      </View>
       <View style={styles.footer}>
         <View style={styles.scoreContainer}>
           <Text style={styles.scoreText}>Score: {route.params?.score}</Text>
@@ -105,8 +114,6 @@ const styles = StyleSheet.create({
     marginTop: hd(2),
   },
   description: {
-    color: 'black',
-    fontSize: RFValue(12),
     marginTop: hd(1),
   },
   footer: {
@@ -144,3 +151,27 @@ const styles = StyleSheet.create({
     fontSize: RFValue(20),
   },
 });
+
+const htmlStyles = {
+  em: {
+    fontStyle: 'italic',
+    color: 'black',
+  },
+  strong: {
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  p: {
+    marginVertical: 4,
+    color: 'black',
+  },
+  ol: {
+    marginVertical: 4,
+    paddingLeft: 20,
+    color: 'black',
+  },
+  li: {
+    marginVertical: 4,
+    color: 'black',
+  },
+};

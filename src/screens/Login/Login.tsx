@@ -1,5 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
+  Alert,
+  BackHandler,
   Image,
   Pressable,
   Text,
@@ -16,17 +18,18 @@ import { LoginSchema } from './constant';
 import HandIcon from '../../components/atoms/Icons/HandIcon';
 import { useDispatch } from 'react-redux';
 import sessionSlice from '../../redux/SessionSlice/SessionSlice';
-import Modal from 'react-native-modal';
 
 import {
   widthPercentageToDP as wd,
   heightPercentageToDP as hd,
 } from 'react-native-responsive-screen';
-
+import { useToken } from '../../redux/SessionSlice/useSessionSelector';
 function Login({ navigation }: ScreenProps<'Login'>) {
-  const { loginRequest } = useHTTP();
+  const token = useToken();
+  const { loginRequest } = useHTTP(token);
   const [handleModal, setHandleModal] = useState(false);
   const dispatch = useDispatch();
+
   const onSubmit = useCallback(
     async (values: { email: string; password: string }) => {
       try {
@@ -35,7 +38,7 @@ function Login({ navigation }: ScreenProps<'Login'>) {
           ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
         }
         dispatch(sessionSlice.actions.updateToken(result?.data));
-        navigation.navigate('Home');
+        navigation.navigate('TabBar');
       } catch (error) {
         console.log(error);
       }
@@ -78,13 +81,7 @@ function Login({ navigation }: ScreenProps<'Login'>) {
             />
             {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
             <View style={styles.footerContainer}>
-              <TouchableOpacity
-                style={styles.forgotPassword}
-                onPress={() => navigation.navigate('ForgotPassword')}
-              >
-                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-              </TouchableOpacity>
-              <Pressable onPress={()=>handleSubmit()} style={styles.signInButton}>
+              <Pressable onPress={() => handleSubmit()} style={styles.signInButton}>
                 <Text style={styles.signInButtonText}>Sign In</Text>
               </Pressable>
               <Pressable

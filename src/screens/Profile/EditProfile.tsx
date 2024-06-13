@@ -17,9 +17,12 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {useSelector} from 'react-redux';
+import { useToken } from '../../redux/SessionSlice/useSessionSelector';
 
 const EditProfile = ({route, navigation}: ScreenProps<'EditProfile'>) => {
-  const {updateRequest, postRequest, addPicture} = useHTTP();
+  const token = useToken()
+  const {updateRequest, postRequest, addPicture} = useHTTP(token);
+
   const [imageUri, setImageUri] = useState<string>();
   const info = useSelector((state: InfoType) => state.info);
 
@@ -89,8 +92,10 @@ const EditProfile = ({route, navigation}: ScreenProps<'EditProfile'>) => {
               <Pressable onPress={selectImage}>
                 <Image
                   source={
-                    imageUri
-                      ? {uri: imageUri}
+                    info?.image
+                      ? imageUri
+                        ? {uri: imageUri}
+                        : {uri: info.image}
                       : require('../../assets/photo.png')
                   }
                   style={{
@@ -107,7 +112,7 @@ const EditProfile = ({route, navigation}: ScreenProps<'EditProfile'>) => {
                   onChangeText={handleChange('nim')}
                   onBlur={handleBlur('nim')}
                   value={values.nim}
-                  placeholder="NIM"
+                  placeholder={info.nim ? String(info.nim) : "NIM"}
                   placeholderTextColor={'gray'}
                   style={{
                     borderWidth: 1,
@@ -143,7 +148,7 @@ const EditProfile = ({route, navigation}: ScreenProps<'EditProfile'>) => {
                   onChangeText={handleChange('phone')}
                   onBlur={handleBlur('phone')}
                   value={values.phone}
-                  placeholder="Confirm Phone"
+                  placeholder="Phone"
                   placeholderTextColor={'gray'}
                   style={{
                     borderWidth: 1,

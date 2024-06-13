@@ -14,9 +14,11 @@ import {makeRupiahValue} from '../../../helper/formatter';
 import {useHTTP} from '../../../hooks/useHTTP';
 import {useFocusEffect} from '@react-navigation/native';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { useToken } from '../../../redux/SessionSlice/useSessionSelector';
 
 const DetailLesson = ({route, navigation}: ScreenProps<'DetailLesson'>) => {
-  const {getRequest, postRequest} = useHTTP();
+  const token = useToken()
+  const {getRequest, postRequest} = useHTTP(token);
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<CourseItem>();
 

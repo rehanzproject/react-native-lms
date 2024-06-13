@@ -15,9 +15,11 @@ import {
   widthPercentageToDP as wd,
   heightPercentageToDP as hd,
 } from 'react-native-responsive-screen';
+import { useToken } from '../../redux/SessionSlice/useSessionSelector';
 
 function Verification({ navigation }: ScreenProps<'Verification'>) {
-  const { postRequest } = useHTTP();
+  const token = useToken()
+  const { postRequest } = useHTTP(token);
   const [countdown, setCountdown] = useState(60); // Initial countdown value
 
   let intervalId: NodeJS.Timeout;

@@ -1,32 +1,87 @@
-import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
-import React, { useState } from 'react';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  StyleSheet,
+  ToastAndroid,
+  Linking,
+} from 'react-native';
 import CustomRoute from '../../components/atoms/CustomRoute/CustomRoute.atom';
-import { ScreenProps } from '../../types';
+import {ScreenProps} from '../../types';
 import Modal from 'react-native-modal';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+import {useFocusEffect} from '@react-navigation/native';
+import {useToken} from '../../redux/SessionSlice/useSessionSelector';
+import {useHTTP} from '../../hooks/useHTTP';
 
-const DownloadCertificate = ({ navigation }: ScreenProps<'DownloadCertificate'>) => {
+const DownloadCertificate = ({
+  route,
+  navigation,
+}: ScreenProps<'DownloadCertificate'>) => {
   const [handleModal, setHandleModal] = useState(false);
+  const [data, setData] = useState<any>();
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const token = useToken();
+  const {getRequest} = useHTTP(token);
+
+  const getPDF = async () => {
+    try {
+      const result = await getRequest(`/user/getPDF?id=${route.params?.id}`);
+      if (!result?.data) {
+        ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
+      }
+      setData(result?.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getPDF();
+    }, [token]),
+  );
+
   const onConfirm = () => {
-    setHandleModal(!handleModal)
+    setHandleModal(!handleModal);
+  };
+
+  const handleDownloadPress = () => {
+    if (data?.url) {
+      Linking.openURL(data.url);
+    } else {
+      ToastAndroid.show('No file URL available', ToastAndroid.LONG);
+    }
   };
 
   return (
     <View style={styles.container}>
       <CustomRoute onPress={() => navigation.goBack()} text="Certificate" />
-      <Text style={styles.title}>Basic Microsoft Word Program</Text>
-      <Pressable
-        onPress={() => {
-          onConfirm();
-        }}
-        style={styles.confirmButton}>
-        <Text style={styles.buttonText}>Download</Text>
+      <Text style={styles.title}>{data?.courseName}</Text>
+      <Image 
+      source={require('../../assets/certificate.png')}
+      />
+      <Pressable style={styles.downloadButton} onPress={handleDownloadPress}>
+        <Text style={styles.buttonText}>Download PDF</Text>
       </Pressable>
       <Modal isVisible={handleModal}>
         <View style={styles.modalContainer}>
-          <Image source={require('../../assets/centang.png')} style={styles.successImage} />
+          <Image
+            source={require('../../assets/centang.png')}
+            style={styles.successImage}
+          />
           <Text style={styles.successText}>Successful</Text>
-          <Text style={styles.infoText}>Congratulations you have a new skill</Text>
+          <Text style={styles.infoText}>
+            Congratulations you have a new skill
+          </Text>
           <Pressable
             onPress={() => navigation.navigate('Home')}
             style={styles.homeButton}>
@@ -50,7 +105,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: hp(2),
   },
-  confirmButton: {
+  downloadButton: {
     position: 'absolute',
     bottom: hp(1),
     backgroundColor: '#0D6EFD',
@@ -62,6 +117,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: wp(4),
     textAlign: 'center',
+  },
+  pdf: {
+    flex: 1,
+    width: wp(90),
+    height: hp(60),
+    marginBottom: hp(2),
   },
   modalContainer: {
     justifyContent: 'center',
@@ -86,7 +147,7 @@ const styles = StyleSheet.create({
     fontSize: wp(4),
     marginBottom: hp(2),
     textAlign: 'center',
-    color: 'black'
+    color: 'black',
   },
   homeButton: {
     backgroundColor: '#0D6EFD',

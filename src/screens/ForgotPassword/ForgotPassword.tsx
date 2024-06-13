@@ -6,7 +6,6 @@ import {
   ToastAndroid,
   View,
   StyleSheet,
-  Dimensions,
 } from 'react-native';
 import {ScreenProps} from '../../types';
 import {Formik} from 'formik';
@@ -16,19 +15,27 @@ import {
   widthPercentageToDP as wd,
   heightPercentageToDP as hd,
 } from 'react-native-responsive-screen';
+import { useToken } from '../../redux/SessionSlice/useSessionSelector';
+
 function ForgotPassword({navigation}: ScreenProps<'ForgotPassword'>) {
-  const {postRequest} = useHTTP();
+  const token = useToken();
+  const {postRequest} = useHTTP(token);
+
   const onSubmit = useCallback(async (values: {email: string}) => {
     try {
-      // const result = await postRequest('/user/forgot-password', values);
-      // if (!result?.data) {
-      //   ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
-      // }
-      navigation.navigate('Verification');
+      console.log('Submitting form with values:', values);
+      const result = await postRequest('/user/forgot-password', values);
+      console.log('Result from API:', result);
+
+      if (!result?.data) {
+        ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
+        return;
+      }
     } catch (error) {
-      console.log(error);
+      console.error('Error in onSubmit:', error);
+      ToastAndroid.show('An unexpected error occurred. Please try again.', ToastAndroid.LONG);
     }
-  }, []);
+  }, [token, navigation, postRequest]);
 
   return (
     <Formik

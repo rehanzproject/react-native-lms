@@ -20,9 +20,11 @@ import {
   widthPercentageToDP as wd,
   heightPercentageToDP as hd,
 } from 'react-native-responsive-screen';
+import { useToken } from '../../redux/SessionSlice/useSessionSelector';
 
 function ChangePassword({ navigation }: ScreenProps<'ChangePassword'>) {
-  const { postRequest } = useHTTP();
+  const token = useToken()
+  const { postRequest } = useHTTP(token);
   const [handleModal, setHandleModal] = useState(false);
   const onSubmit = useCallback(
     async (values: { password: string }) => {
