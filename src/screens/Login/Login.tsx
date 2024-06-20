@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
   BackHandler,
@@ -11,27 +11,28 @@ import {
   View,
   StyleSheet,
 } from 'react-native';
-import { ScreenProps } from '../../types';
-import { Formik } from 'formik';
-import { useHTTP } from '../../hooks/useHTTP';
-import { LoginSchema } from './constant';
+import {ScreenProps} from '../../types';
+import {Formik} from 'formik';
+import {useHTTP} from '../../hooks/useHTTP';
+import {LoginSchema} from './constant';
 import HandIcon from '../../components/atoms/Icons/HandIcon';
-import { useDispatch } from 'react-redux';
+import {useDispatch} from 'react-redux';
 import sessionSlice from '../../redux/SessionSlice/SessionSlice';
 
 import {
   widthPercentageToDP as wd,
   heightPercentageToDP as hd,
 } from 'react-native-responsive-screen';
-import { useToken } from '../../redux/SessionSlice/useSessionSelector';
-function Login({ navigation }: ScreenProps<'Login'>) {
+import {useToken} from '../../redux/SessionSlice/useSessionSelector';
+import {useFocusEffect} from '@react-navigation/native';
+function Login({navigation}: ScreenProps<'Login'>) {
   const token = useToken();
-  const { loginRequest } = useHTTP(token);
+  const {loginRequest} = useHTTP(token);
   const [handleModal, setHandleModal] = useState(false);
   const dispatch = useDispatch();
 
   const onSubmit = useCallback(
-    async (values: { email: string; password: string }) => {
+    async (values: {email: string; password: string}) => {
       try {
         const result = await loginRequest('/user/login', values);
         if (!result?.data) {
@@ -43,16 +44,15 @@ function Login({ navigation }: ScreenProps<'Login'>) {
         console.log(error);
       }
     },
-    [dispatch, loginRequest, navigation]
+    [dispatch, loginRequest, navigation],
   );
 
   return (
     <Formik
-      initialValues={{ email: '', password: '' }}
+      initialValues={{email: '', password: ''}}
       validationSchema={LoginSchema}
-      onSubmit={(values) => onSubmit(values)}
-    >
-      {({ errors, handleChange, handleBlur, handleSubmit, values }) => (
+      onSubmit={(values) => onSubmit(values)}>
+      {({errors, handleChange, handleBlur, handleSubmit, values}) => (
         <View style={styles.container}>
           <View style={styles.innerContainer}>
             <View style={styles.headerContainer}>
@@ -68,7 +68,9 @@ function Login({ navigation }: ScreenProps<'Login'>) {
               placeholderTextColor="gray"
               style={styles.input}
             />
-            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+            {errors.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
+            )}
             <Text style={styles.label}>Password :</Text>
             <TextInput
               onChangeText={handleChange('password')}
@@ -79,15 +81,18 @@ function Login({ navigation }: ScreenProps<'Login'>) {
               placeholderTextColor="gray"
               style={styles.input}
             />
-            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+            {errors.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
             <View style={styles.footerContainer}>
-              <Pressable onPress={() => handleSubmit()} style={styles.signInButton}>
+              <Pressable
+                onPress={() => handleSubmit()}
+                style={styles.signInButton}>
                 <Text style={styles.signInButtonText}>Sign In</Text>
               </Pressable>
               <Pressable
                 onPress={() => navigation.navigate('Register')}
-                style={styles.signUpButton}
-              >
+                style={styles.signUpButton}>
                 <Text style={styles.signUpButtonText}>
                   Didn't have an account , Sign Up
                 </Text>

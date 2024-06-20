@@ -17,23 +17,23 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {useSelector} from 'react-redux';
-import { useToken } from '../../redux/SessionSlice/useSessionSelector';
+import {useToken} from '../../redux/SessionSlice/useSessionSelector';
 
 const EditProfile = ({route, navigation}: ScreenProps<'EditProfile'>) => {
-  const token = useToken()
+  const token = useToken();
   const {updateRequest, postRequest, addPicture} = useHTTP(token);
 
   const [imageUri, setImageUri] = useState<string>();
   const info = useSelector((state: InfoType) => state.info);
 
   const initialValues = {
+    name: info.name || '',
     nim: info?.nim || '',
-    email: info?.email || '',
     phone: info?.phone || '',
   };
 
   const onSubmit = useCallback(
-    async (values: typeof initialValues) => {
+    async (values: {nim: string; name: string; phone: string}) => {
       try {
         const result = await updateRequest('/user/info/edit', values);
         if (!result?.data) {
@@ -107,12 +107,12 @@ const EditProfile = ({route, navigation}: ScreenProps<'EditProfile'>) => {
                 />
               </Pressable>
               <View>
-                <Text style={{color: 'black', fontSize: wp(4)}}>Nim:</Text>
+              <Text style={{color: 'black', fontSize: wp(4)}}>Name:</Text>
                 <TextInput
-                  onChangeText={handleChange('nim')}
-                  onBlur={handleBlur('nim')}
-                  value={values.nim}
-                  placeholder={info.nim ? String(info.nim) : "NIM"}
+                  onChangeText={handleChange('name')}
+                  onBlur={handleBlur('name')}
+                  value={values.name}
+                  placeholder={info.name ? String(info.name) : 'name'}
                   placeholderTextColor={'gray'}
                   style={{
                     borderWidth: 1,
@@ -122,15 +122,12 @@ const EditProfile = ({route, navigation}: ScreenProps<'EditProfile'>) => {
                     marginTop: hp(1),
                   }}
                 />
-                <Text
-                  style={{color: 'black', fontSize: wp(4), marginTop: hp(2)}}>
-                  Email:
-                </Text>
+                <Text style={{color: 'black', fontSize: wp(4)}}>Nim:</Text>
                 <TextInput
-                  onChangeText={handleChange('email')}
-                  onBlur={handleBlur('email')}
-                  value={values.email}
-                  placeholder="Email"
+                  onChangeText={handleChange('nim')}
+                  onBlur={handleBlur('nim')}
+                  value={values.nim}
+                  placeholder={info.nim ? String(info.nim) : 'NIM'}
                   placeholderTextColor={'gray'}
                   style={{
                     borderWidth: 1,
@@ -148,7 +145,7 @@ const EditProfile = ({route, navigation}: ScreenProps<'EditProfile'>) => {
                   onChangeText={handleChange('phone')}
                   onBlur={handleBlur('phone')}
                   value={values.phone}
-                  placeholder="Phone"
+                  placeholder={info.phone ? info.phone : 'phone'}                 
                   placeholderTextColor={'gray'}
                   style={{
                     borderWidth: 1,

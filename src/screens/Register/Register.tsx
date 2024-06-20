@@ -42,13 +42,12 @@ function Register({navigation}: ScreenProps<'Register'>) {
         if (!result?.data) {
           ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
         }
-        dispatch(sessionSlice.actions.updateToken(result?.data));
         setHandleModal(!handleModal);
       } catch (error) {
         console.log(error);
       }
     },
-    [],
+    [postRequest, dispatch, navigation],
   );
 
   return (

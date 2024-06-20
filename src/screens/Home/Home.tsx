@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, useCallback} from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   Dimensions,
   Image,
@@ -11,26 +11,26 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from 'react-native';
-import {CourseItem, InfoType, ScreenProps} from '../../types';
-import {useHTTP} from '../../hooks/useHTTP';
+import { CourseItem, InfoType, ScreenProps } from '../../types';
+import { useHTTP } from '../../hooks/useHTTP';
 import CustomSwiperSkeleton from './CustomSwiperSkeleton';
 import CustomSwiper from './CustomSwiper';
 import SearchIcon from '../../components/atoms/Icons/SearchIcon';
-import {useFocusEffect} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 import infoSlice from '../../redux/InfoSlice/InfoSlice';
 import SkeletonLoaderOneBar from '../../components/organism/SkeletonOneBar';
 import {
   widthPercentageToDP as wd,
   heightPercentageToDP as hd,
 } from 'react-native-responsive-screen';
-import {useToken} from '../../redux/SessionSlice/useSessionSelector';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { useToken } from '../../redux/SessionSlice/useSessionSelector';
+import { RFValue } from 'react-native-responsive-fontsize';
 
-function Home({route, navigation}: ScreenProps<'Home'>) {
+function Home({ route, navigation }: ScreenProps<'Home'>) {
   const token = useToken();
   const dispatch = useDispatch();
-  const {getRequest} = useHTTP(token);
+  const { getRequest } = useHTTP(token);
   const [course, setCourse] = useState<any | null>();
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -84,8 +84,8 @@ function Home({route, navigation}: ScreenProps<'Home'>) {
                 <Image
                   source={
                     info?.image
-                      ? {uri: info?.image}
-                      : require('../../assets/defaultThumbnailCourse.png')
+                      ? { uri: info?.image }
+                      : require('../../assets/photo.png')
                   }
                   defaultSource={require('../../assets/academade.png')}
                   style={styles.logo}
@@ -98,21 +98,21 @@ function Home({route, navigation}: ScreenProps<'Home'>) {
           </View>
         </View>
         <View style={styles.searchContainer}>
-          <View style={styles.searchIcon}>
-            <SearchIcon />
-          </View>
           <TextInput
             placeholder="Search"
             placeholderTextColor={'gray'}
             onPressIn={() => navigation.navigate('Search')}
             style={styles.searchInput}
           />
+          <View style={styles.searchIcon}>
+            <SearchIcon />
+          </View>
         </View>
         <View style={styles.courseSection}>
           <View style={styles.popularCourseContainer}>
             <Text style={styles.popularCourseText}>Popular Course</Text>
             <TouchableOpacity onPress={() => navigation.navigate('AllCourse')}>
-              <Text style={styles.seeAllText}>See All</Text>
+              <Text style={styles.seeAllText}>View All</Text>
             </TouchableOpacity>
           </View>
           {loading ? (
@@ -123,15 +123,15 @@ function Home({route, navigation}: ScreenProps<'Home'>) {
         </View>
         <View style={styles.courseSection}>
           <View style={styles.continousCourseContainer}>
-            <Text style={styles.popularCourseText}>Continous Course</Text>
+            <Text style={styles.popularCourseText}>Continuous Course</Text>
             <TouchableOpacity onPress={() => navigation.navigate('AllCourse')}>
-              <Text style={styles.seeAllText}>See All</Text>
+              <Text style={styles.seeAllText}>View All</Text>
             </TouchableOpacity>
           </View>
           {loading ? (
             <CustomSwiperSkeleton />
           ) : (
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
               <CustomSwiper data={course} navigation={navigation} />
             </View>
           )}
@@ -140,6 +140,7 @@ function Home({route, navigation}: ScreenProps<'Home'>) {
     </ScrollView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -170,19 +171,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingTop: hd(2),
-  },
-  searchIcon: {
-    paddingLeft: wd(2),
+    position: 'relative',
   },
   searchInput: {
+    flex: 1,
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 8,
-    width: wd(70),
     color: 'black',
     paddingVertical: hd(1),
-    paddingHorizontal: wd(8),
-    marginLeft: wd(2),
+    paddingHorizontal: wd(8), // Increase padding to accommodate icon
+  },
+  searchIcon: {
+    position: 'absolute',
+    // left: wd(2),
+    top: wd(4),
+     margin: wd(2), // Adjust position to fit inside the TextInput
+    zIndex: 1,
   },
   courseSection: {
     paddingVertical: hd(2), // Adjust this value to reduce spacing between sections

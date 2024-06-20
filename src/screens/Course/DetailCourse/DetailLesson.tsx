@@ -13,11 +13,14 @@ import StarIcon from '../../../components/atoms/Icons/StarIcon';
 import {makeRupiahValue} from '../../../helper/formatter';
 import {useHTTP} from '../../../hooks/useHTTP';
 import {useFocusEffect} from '@react-navigation/native';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import { useToken } from '../../../redux/SessionSlice/useSessionSelector';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+import {useToken} from '../../../redux/SessionSlice/useSessionSelector';
 
 const DetailLesson = ({route, navigation}: ScreenProps<'DetailLesson'>) => {
-  const token = useToken()
+  const token = useToken();
   const {getRequest, postRequest} = useHTTP(token);
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<CourseItem>();
@@ -46,7 +49,9 @@ const DetailLesson = ({route, navigation}: ScreenProps<'DetailLesson'>) => {
 
   const getCourse = async () => {
     try {
-      const result = await getRequest(`/user/course/modules?id=${route.params?.id}`);
+      const result = await getRequest(
+        `/user/course/modules?id=${route.params?.id}`,
+      );
       if (!result?.data) {
         ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
       }
@@ -59,43 +64,121 @@ const DetailLesson = ({route, navigation}: ScreenProps<'DetailLesson'>) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={{flexGrow: 1}}>
+    <ScrollView
+      contentContainerStyle={{
+        flexGrow: 1,
+        paddingHorizontal: wp(4),
+        paddingBottom: hp(10),
+      }}>
       <CustomRoute onPress={() => navigation.goBack()} text="Course Detail" />
       <Image
         source={{uri: data?.thumbnail}}
-        style={{width: '100%', aspectRatio: 16/9, borderRadius: wp(5)}}
+        style={{width: '100%', aspectRatio: 16 / 9, borderRadius: wp(5)}}
       />
-      <Text style={{color: 'black', fontWeight: 'bold', fontSize: wp(5), paddingTop: hp(2)}}>{data?.name}</Text>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+      <Text
+        style={{
+          color: 'black',
+          fontWeight: 'bold',
+          fontSize: wp(5),
+          paddingTop: hp(2),
+        }}>
+        {data?.name}
+      </Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
         <View style={{flexDirection: 'row'}}>
           <StarIcon />
-          <Text style={{color: 'black', fontSize: wp(4), fontWeight: 'bold'}}>{data?.rating1 ?? 'Belum ada rating'}</Text>
+          <Text style={{color: 'black', fontSize: wp(4), fontWeight: 'bold'}}>
+            {data?.rating ?? 'Belum ada rating'}
+          </Text>
         </View>
         <Text style={{color: '#0D6EFD', fontWeight: 'bold', fontSize: wp(4)}}>
           {makeRupiahValue(data?.price ?? 0)}
         </Text>
       </View>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between', gap: wp(2), paddingTop: hp(4), paddingHorizontal: wp(2), marginRight: wp(2)}}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          gap: wp(2),
+          paddingTop: hp(4),
+          paddingHorizontal: wp(2),
+          marginRight: wp(2),
+        }}>
         <Pressable
-          onPress={() => navigation.navigate('DetailCourse', {id: route.params?.id || ''})}
-          style={{borderRadius: 12, borderWidth: 1, borderColor: '#0D6EFD', width: '48%', backgroundColor: route.name !== 'DetailLesson' ? '#0D6EFD' : 'transparent'}}>
-          <Text style={{textAlign: 'center', paddingVertical: wp(2), color: route.name !== 'DetailLesson' ? 'white' : '#0D6EFD', fontWeight: 'bold', fontSize: wp(4)}}>Overview</Text>
+          onPress={() =>
+            navigation.navigate('DetailCourse', {id: route.params?.id || ''})
+          }
+          style={{
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: '#0D6EFD',
+            width: '48%',
+            backgroundColor:
+              route.name !== 'DetailLesson' ? '#0D6EFD' : 'transparent',
+          }}>
+          <Text
+            style={{
+              textAlign: 'center',
+              paddingVertical: wp(2),
+              color: route.name !== 'DetailLesson' ? 'white' : '#0D6EFD',
+              fontWeight: 'bold',
+              fontSize: wp(4),
+            }}>
+            Overview
+          </Text>
         </Pressable>
         <Pressable
-          onPress={() => navigation.navigate('DetailLesson', {id: route.params?.id || ''})}
-          style={{borderRadius: 12, borderWidth: 1, borderColor: '#0D6EFD', width: '48%', backgroundColor: route.name === 'DetailLesson' ? '#0D6EFD' : 'transparent'}}>
-          <Text style={{textAlign: 'center', paddingVertical: wp(2), color: route.name === 'DetailLesson' ? 'white' : '#0D6EFD', fontWeight: 'bold', fontSize: wp(4)}}>Lessons</Text>
+          onPress={() =>
+            navigation.navigate('DetailLesson', {id: route.params?.id || ''})
+          }
+          style={{
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: '#0D6EFD',
+            width: '48%',
+            backgroundColor:
+              route.name === 'DetailLesson' ? '#0D6EFD' : 'transparent',
+          }}>
+          <Text
+            style={{
+              textAlign: 'center',
+              paddingVertical: wp(2),
+              color: route.name === 'DetailLesson' ? 'white' : '#0D6EFD',
+              fontWeight: 'bold',
+              fontSize: wp(4),
+            }}>
+            Lessons
+          </Text>
         </Pressable>
       </View>
       <View>
         {data?.modules?.map((list, index) => (
-          <Text style={{fontSize: wp(4), fontWeight: 'bold', borderWidth: 1, borderRadius: wp(2), padding: wp(2), margin: wp(2), color: 'black' }} key={index}>{list.name}</Text>
+          <Text
+            style={{
+              fontSize: wp(4),
+              fontWeight: 'bold',
+              borderWidth: 1,
+              borderRadius: wp(2),
+              // paddingHorizontal: wp(2),
+              marginTop: wp(5),
+              padding: wp(2),
+              margin: wp(2),
+              color: 'black',
+            }}
+            key={index}>
+            {list.name}
+          </Text>
         ))}
       </View>
-      <View style={{position: 'absolute', bottom: 0, width: '100%'}}>
-      <Pressable
+      <View style={{position: 'absolute', bottom: 0, width: '100%',margin: wp(3)}}>
+        <Pressable
           onPress={() => onConfirm()}
-          style={{backgroundColor: '#0D6EFD', borderRadius: 12 , margin: wp(2)}}>
+          style={{backgroundColor: '#0D6EFD', borderRadius: 12, margin: wp(2)}}>
           <Text
             style={{
               textAlign: 'center',

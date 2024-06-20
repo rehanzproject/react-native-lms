@@ -66,30 +66,20 @@ const Quiz = ({route, navigation}: ScreenProps<'Quiz'>) => {
   const calculateScore = async () => {
     try {
       let correctAnswers = 0;
-  
       quizData?.data?.quizzes?.forEach((quiz, questionIndex) => {
         const selectedChoiceIndex = selectedAnswers[questionIndex];
         if (quiz.choices[selectedChoiceIndex]?.valid) {
           correctAnswers++;
         }
       });
-  
-      const scorePercentage = (correctAnswers / (quizData?.data?.quizzes?.length ?? 0)) * 100;
-      console.log('Calculated Score Percentage:', scorePercentage);
-      
-      setScore(scorePercentage); // Update the score state
-  
+      const scorePercentage = (correctAnswers / (quizData?.data?.quizzes?.length ?? 0)) * 100;      
       const result = await postRequest(
         `/user/module/quiz/score?id=${route.params?.id}&score=${scorePercentage}&course_id=${route.params?.course_id}`,
       );
-      console.log('Post Request Result:', result);
-  
       if (!result?.data) {
         ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
       }
-      console.log(result);
       navigation.navigate('Material', {id: route.params?.course_id ?? ''})
-      
     } catch (error) {
       console.error(error);
     } finally {

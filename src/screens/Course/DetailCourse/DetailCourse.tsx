@@ -7,23 +7,23 @@ import {
   ToastAndroid,
   StyleSheet,
 } from 'react-native';
-import React, { useState } from 'react';
-import { Course, ScreenProps } from '../../../types';
+import React, {useState} from 'react';
+import {Course, ScreenProps} from '../../../types';
 import CustomRoute from '../../../components/atoms/CustomRoute/CustomRoute.atom';
 import StarIcon from '../../../components/atoms/Icons/StarIcon';
-import { makeRupiahValue } from '../../../helper/formatter';
+import {makeRupiahValue} from '../../../helper/formatter';
 import * as Progress from 'react-native-progress';
-import { useFocusEffect } from '@react-navigation/native';
-import { useHTTP } from '../../../hooks/useHTTP';
+import {useFocusEffect} from '@react-navigation/native';
+import {useHTTP} from '../../../hooks/useHTTP';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { useToken } from '../../../redux/SessionSlice/useSessionSelector';
+import {useToken} from '../../../redux/SessionSlice/useSessionSelector';
 
-const DetailCourse = ({ route, navigation }: ScreenProps<'DetailCourse'>) => {
+const DetailCourse = ({route, navigation}: ScreenProps<'DetailCourse'>) => {
   const token = useToken();
-  const { getRequest, postRequest } = useHTTP(token);
+  const {getRequest, postRequest} = useHTTP(token);
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<Course>();
 
@@ -70,114 +70,108 @@ const DetailCourse = ({ route, navigation }: ScreenProps<'DetailCourse'>) => {
 
   // Function to prepare the ratings data
   const prepareRatingsData = () => {
-    const totalRatings = (data?.rating1 ?? 0) + (data?.rating2 ?? 0) + (data?.rating3 ?? 0) + (data?.rating4 ?? 0) + (data?.rating5 ?? 0);
+    const totalRatings =
+      (data?.rating1 ?? 0) +
+      (data?.rating2 ?? 0) +
+      (data?.rating3 ?? 0) +
+      (data?.rating4 ?? 0) +
+      (data?.rating5 ?? 0);
     const ratings = [
-      { no: 5, rating: data?.rating5 ?? 0 },
-      { no: 4, rating: data?.rating4 ?? 0 },
-      { no: 3, rating: data?.rating3 ?? 0 },
-      { no: 2, rating: data?.rating2 ?? 0 },
-      { no: 1, rating: data?.rating1 ?? 0 },
+      {no: 5, rating: data?.rating5 ?? 0},
+      {no: 4, rating: data?.rating4 ?? 0},
+      {no: 3, rating: data?.rating3 ?? 0},
+      {no: 2, rating: data?.rating2 ?? 0},
+      {no: 1, rating: data?.rating1 ?? 0},
     ];
-    return ratings.map(r => ({ ...r, progress: totalRatings > 0 ? r.rating / totalRatings : 0 }));
+    return ratings.map((r) => ({
+      ...r,
+      progress: totalRatings > 0 ? r.rating / totalRatings : 0,
+    }));
   };
 
   const ratingsData = prepareRatingsData();
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <CustomRoute onPress={() => navigation.goBack()} text="Course Detail" />
-        <Image
-          source={{ uri: data?.thumbnail }}
-          style={styles.thumbnail}
-        />
-        <Text style={styles.courseName}>
-          {data?.name}
-        </Text>
-        <View style={styles.ratingPriceContainer}>
-          <View style={styles.ratingContainer}>
-            <StarIcon />
-            <Text style={styles.ratingText}>
-              {data?.rating ?? 'Belum ada rating'}
-            </Text>
-          </View>
-          <Text style={styles.priceText}>
-            {makeRupiahValue(data?.price ?? 0)}
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <CustomRoute onPress={() => navigation.goBack()} text="Course Detail" />
+      <Image source={{uri: data?.thumbnail}} style={styles.thumbnail} />
+      <Text style={styles.courseName}>{data?.name}</Text>
+      <View style={styles.ratingPriceContainer}>
+        <View style={styles.ratingContainer}>
+          <StarIcon />
+          <Text style={styles.ratingText}>
+            {data?.rating ?? 'Belum ada rating'}
           </Text>
         </View>
-        <View style={styles.tabContainer}>
-          <Pressable
-            onPress={() =>
-              navigation.navigate('DetailCourse', { id: route.params?.id || '' })
-            }
+        <Text style={styles.priceText}>
+          {makeRupiahValue(data?.price ?? 0)}
+        </Text>
+      </View>
+      <View style={styles.tabContainer}>
+        <Pressable
+          onPress={() =>
+            navigation.navigate('DetailCourse', {id: route.params?.id || ''})
+          }
+          style={[
+            styles.tab,
+            route.name === 'DetailCourse' && styles.activeTab,
+          ]}>
+          <Text
             style={[
-              styles.tab,
-              route.name === 'DetailCourse' && styles.activeTab,
-            ]}>
-            <Text style={[
               styles.tabText,
               route.name === 'DetailCourse' && styles.activeTabText,
             ]}>
-              Overview
-            </Text>
-          </Pressable>
-          <Pressable
-            onPress={() =>
-              navigation.navigate('DetailLesson', { id: route.params?.id || '' })
-            }
+            Overview
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() =>
+            navigation.navigate('DetailLesson', {id: route.params?.id || ''})
+          }
+          style={[
+            styles.tab,
+            route.name !== 'DetailCourse' && styles.activeTab,
+          ]}>
+          <Text
             style={[
-              styles.tab,
-              route.name !== 'DetailCourse' && styles.activeTab,
-            ]}>
-            <Text style={[
               styles.tabText,
               route.name !== 'DetailCourse' && styles.activeTabText,
             ]}>
-              Lessons
-            </Text>
-          </Pressable>
-        </View>
-        <Text style={styles.sectionTitle}>
-          Description
-        </Text>
-        <Text style={styles.descriptionText}>
-          {data?.description}
-        </Text>
-        <View style={styles.reviewsContainer}>
-          <Text style={styles.sectionTitle}>
-            Reviews
-          </Text>
-          <Text style={styles.ratingOverall}>
-            {data?.rating}
-          </Text>
-          <View style={styles.ratingsBarContainer}>
-            {ratingsData.map((item, i) => (
-              <View key={i} style={styles.ratingBar}>
-                <Text style={styles.ratingBarText}>{item.no}</Text>
-                <Progress.Bar
-                  progress={item.progress}
-                  width={wp(50)}
-                  height={hp(2)}
-                  color="rgb(0,112,255)"
-                  animated
-                  borderWidth={0}
-                  unfilledColor="rgb(217,217,217)"
-                />
-              </View>
-            ))}
-          </View>
-        </View>
-      </ScrollView>
-      <View style={styles.buyNowButtonContainer}>
-        <Pressable
-          onPress={onConfirm}
-          style={styles.buyNowButton}>
-          <Text style={styles.buyNowButtonText}>
-            Buy Now
+            Lessons
           </Text>
         </Pressable>
       </View>
-    </View>
+      <Text style={styles.sectionTitle}>Description</Text>
+      <Text style={styles.descriptionText}>{data?.description}</Text>
+      <View style={styles.reviewsContainer}>
+        <View>
+        <Text style={styles.sectionTitle}>Reviews</Text>
+        <Text style={styles.ratingOverall}>{data?.rating}</Text>
+
+        </View>
+        <View style={styles.ratingsBarContainer}>
+          {ratingsData.map((item, i) => (
+            <View key={i} style={styles.ratingBar}>
+              <Text style={styles.ratingBarText}>{item.no}</Text>
+              <Progress.Bar
+                progress={item.progress}
+                width={wp(50)}
+                height={hp(2)}
+                color="rgb(0,112,255)"
+                animated
+                borderWidth={0}
+                unfilledColor="rgb(217,217,217)"
+              />
+            </View>
+          ))}
+        </View>
+      </View>
+      <View style={styles.buyNowButtonContainer}>
+        <Pressable onPress={onConfirm} style={styles.buyNowButton}>
+          <Text style={styles.buyNowButtonText}>Buy Now</Text>
+        </Pressable>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -258,6 +252,8 @@ const styles = StyleSheet.create({
   },
   reviewsContainer: {
     position: 'relative',
+    flexDirection: 'row',
+
     flex: 1,
   },
   ratingOverall: {
@@ -266,10 +262,12 @@ const styles = StyleSheet.create({
     fontSize: wp(10),
   },
   ratingsBarContainer: {
-    position: 'absolute',
-    right: wp(10),
-    top: hp(8),
+    // position: 'absolute',
+    // right: wp(10),
+    // top: hp(8),
     flex: 1,
+    flexDirection: 'column',
+    paddingTop: wp(10)
   },
   ratingBar: {
     flexDirection: 'row',
@@ -284,18 +282,19 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    padding: wp(2),
+    paddingLeft: wp(4),
   },
   buyNowButton: {
     backgroundColor: '#0D6EFD',
     borderRadius: 12,
-    padding: wp(4),
+    marginVertical: wp(2),
   },
   buyNowButtonText: {
     textAlign: 'center',
     color: 'white',
     fontWeight: 'bold',
     fontSize: wp(5),
+    paddingVertical: wp(2)
   },
 });
 

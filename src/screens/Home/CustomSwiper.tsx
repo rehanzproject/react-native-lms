@@ -89,7 +89,8 @@ const styles = StyleSheet.create({
     marginLeft: wd(1),
   },
   priceText: {
-    color: 'black',
+    color: '#0D6EFD',
+    fontWeight:'bold',
     fontSize: RFValue(12), // Example using RFValue for responsive font size
   },
 });

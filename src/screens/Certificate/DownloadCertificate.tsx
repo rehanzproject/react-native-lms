@@ -83,7 +83,7 @@ const DownloadCertificate = ({
             Congratulations you have a new skill
           </Text>
           <Pressable
-            onPress={() => navigation.navigate('Home')}
+            onPress={() => navigation.navigate('TabBar')}
             style={styles.homeButton}>
             <Text style={styles.buttonText}>Go to Home</Text>
           </Pressable>

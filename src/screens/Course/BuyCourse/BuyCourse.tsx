@@ -186,7 +186,7 @@ const BuyCourse = ({route, navigation}: ScreenProps<'BuyCourse'>) => {
               </Text>
               <Text style={{fontSize: wp(4), color: 'black'}}>successful</Text>
               <Pressable
-                onPress={() => navigation.navigate('Home')}
+                onPress={() => navigation.navigate('TabBar')}
                 style={{
                   paddingVertical: hp(2),
                   paddingHorizontal: wp(10),

@@ -16,9 +16,9 @@ function Search({route, navigation}: ScreenProps<'Search'>) {
     'Wireframe',
     'Prototyping',
     'Design System',
-    'Design System',
-    'Design System',
-    'Design System',
+    'Basic Excel',
+    'Basic Photoshop',
+    'Advanced Corel Draw',
   ];
 
   return (

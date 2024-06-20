@@ -6,8 +6,8 @@ export const useHTTP = (token: string) => {
   const API_URL = 'https://secondly-suited-fawn.ngrok-free.app/api/v1';
   const processError = (error: any) => {
     if (error.response) {
-      console.error('Server Error:', error.response.data);
-      ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
+      console.error('Server Error:', error?.response?.data);
+      ToastAndroid.show(error?.response?.data?.message, ToastAndroid.SHORT);
     } else if (error.request) {
       // Request was made but no response received
       console.error('Network Error:', error.request);
