@@ -33,6 +33,7 @@ export type RootStackParamList = {
   BuyCourse: undefined | {id: string; price: number; coupon: string};
   ChangePassword: undefined;
   Verification: undefined;
+  
   DownloadCertificate: undefined | {id: string};
   // Define other screens if you have them
 };
@@ -70,7 +71,7 @@ export interface InfoType {
   info: {
     name: string;
     image: string;
-    nim: string;
+    address: string;
     email: string;
     phone: string;
   };

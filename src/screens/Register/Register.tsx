@@ -21,22 +21,25 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { useToken } from '../../redux/SessionSlice/useSessionSelector';
+import {useToken} from '../../redux/SessionSlice/useSessionSelector';
+import {Picker} from '@react-native-picker/picker';
 
 function Register({navigation}: ScreenProps<'Register'>) {
   const [handleModal, setHandleModal] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const token = useToken()
+  const token = useToken();
   const {postRequest} = useHTTP(token);
 
   const handleClick = useCallback(
     async (values: {
       nim: string;
       name: string;
+      prodi: string;
       email: string;
       password: string;
       confirmPassword: string;
     }) => {
+      ToastAndroid.show('tunggu', ToastAndroid.SHORT);
       try {
         const result = await postRequest('/user/register', values);
         if (!result?.data) {
@@ -58,20 +61,35 @@ function Register({navigation}: ScreenProps<'Register'>) {
         email: '',
         password: '',
         confirmPassword: '',
+        prodi: '',
       }}
       validationSchema={RegisterSchema}
       onSubmit={(values) => handleClick(values)}>
-      {({errors, handleChange, handleBlur, handleSubmit, values}) => (
+      {({
+        errors,
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        values,
+        setFieldValue,
+      }) => (
         <ScrollView contentContainerStyle={{flexGrow: 1}}>
           <View style={{padding: wp(10), justifyContent: 'center'}}>
             <View style={{flexDirection: 'row'}}>
-              <Text style={{fontSize: wp(6),color:'black', fontWeight: 'bold', paddingRight: wp(2), paddingBottom: hp(2)}}>
+              <Text
+                style={{
+                  fontSize: wp(6),
+                  color: 'black',
+                  fontWeight: 'bold',
+                  paddingRight: wp(2),
+                  paddingBottom: hp(2),
+                }}>
                 Sign Up
               </Text>
               <HandIcon />
             </View>
 
-            <Text style={{fontSize: wp(4), color: 'black'}}>Nim</Text>
+            <Text style={{fontSize: wp(4), color: 'black'}}>NIM:</Text>
             <TextInput
               onChangeText={handleChange('nim')}
               onBlur={handleBlur('nim')}
@@ -106,6 +124,35 @@ function Register({navigation}: ScreenProps<'Register'>) {
               }}
             />
             <Text style={{color: 'black'}}>{errors.name}</Text>
+            <Text style={{fontSize: wp(4), color: 'black'}}>
+              Program Studi:
+            </Text>
+            <View
+              style={{
+                borderColor: 'gray',
+                borderWidth: 1,
+                borderRadius: wp(2),
+                marginBottom: hp(1),
+              }}>
+              <Picker
+                selectedValue={values.prodi}
+                style={{color: 'black'}}
+                onValueChange={(itemValue) =>
+                  setFieldValue('prodi', itemValue)
+                }>
+                <Picker.Item label="Select Program Studi" value="" />
+                <Picker.Item
+                  label="Teknik Informatika"
+                  value="Teknik Informatika"
+                />
+                <Picker.Item
+                  label="Desain Komunikasi Visual"
+                  value="Desain Komunikasi Visual"
+                />
+                <Picker.Item label="Sistem Komputer" value="Sistem Komputer" />
+              </Picker>
+            </View>
+            <Text style={{color: 'black'}}>{errors.prodi}</Text>
 
             <Text style={{fontSize: wp(4), color: 'black'}}>Email:</Text>
             <TextInput
@@ -144,7 +191,9 @@ function Register({navigation}: ScreenProps<'Register'>) {
             />
             <Text style={{color: 'black'}}>{errors.password}</Text>
 
-            <Text style={{fontSize: wp(4), color: 'black'}}>Confirm Password:</Text>
+            <Text style={{fontSize: wp(4), color: 'black'}}>
+              Confirm Password:
+            </Text>
             <TextInput
               onChangeText={handleChange('confirmPassword')}
               onBlur={handleBlur('confirmPassword')}
@@ -171,7 +220,8 @@ function Register({navigation}: ScreenProps<'Register'>) {
                 marginVertical: hp(2),
                 paddingVertical: hp(1.5),
               }}>
-              <Text style={{textAlign: 'center', color: 'white', fontSize: wp(4)}}>
+              <Text
+                style={{textAlign: 'center', color: 'white', fontSize: wp(4)}}>
                 Submit
               </Text>
             </Pressable>
@@ -184,15 +234,27 @@ function Register({navigation}: ScreenProps<'Register'>) {
                 marginVertical: hp(2),
                 paddingVertical: hp(1.5),
               }}>
-              <Text style={{textAlign: 'center', color: '#0D6EFD', fontSize: wp(4)}}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: '#0D6EFD',
+                  fontSize: wp(4),
+                }}>
                 Already have an account, Sign In
               </Text>
             </Pressable>
           </View>
           <Modal isVisible={handleModal}>
-            <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '40%'}}>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'white',
+                height: '40%',
+              }}>
               <Image source={require('../../assets/centang.png')} />
-              <Text style={{color: 'black', fontWeight: 'bold', fontSize: wp(6)}}>
+              <Text
+                style={{color: 'black', fontWeight: 'bold', fontSize: wp(6)}}>
                 Successful
               </Text>
               <Pressable

@@ -27,13 +27,12 @@ const EditProfile = ({route, navigation}: ScreenProps<'EditProfile'>) => {
   const info = useSelector((state: InfoType) => state.info);
 
   const initialValues = {
-    name: info.name || '',
-    nim: info?.nim || '',
+    name: info?.name || '',
     phone: info?.phone || '',
   };
 
   const onSubmit = useCallback(
-    async (values: {nim: string; name: string; phone: string}) => {
+    async (values: {name: string; phone: string}) => {
       try {
         const result = await updateRequest('/user/info/edit', values);
         if (!result?.data) {
@@ -72,6 +71,7 @@ const EditProfile = ({route, navigation}: ScreenProps<'EditProfile'>) => {
       }
     });
   };
+
   return (
     <View style={{flex: 1}}>
       <Formik
@@ -107,27 +107,12 @@ const EditProfile = ({route, navigation}: ScreenProps<'EditProfile'>) => {
                 />
               </Pressable>
               <View>
-              <Text style={{color: 'black', fontSize: wp(4)}}>Name:</Text>
+                <Text style={{color: 'black', fontSize: wp(4)}}>Name:</Text>
                 <TextInput
                   onChangeText={handleChange('name')}
                   onBlur={handleBlur('name')}
                   value={values.name}
                   placeholder={info.name ? String(info.name) : 'name'}
-                  placeholderTextColor={'gray'}
-                  style={{
-                    borderWidth: 1,
-                    borderRadius: wp(3),
-                    color: 'black',
-                    paddingHorizontal: wp(3),
-                    marginTop: hp(1),
-                  }}
-                />
-                <Text style={{color: 'black', fontSize: wp(4)}}>Nim:</Text>
-                <TextInput
-                  onChangeText={handleChange('nim')}
-                  onBlur={handleBlur('nim')}
-                  value={values.nim}
-                  placeholder={info.nim ? String(info.nim) : 'NIM'}
                   placeholderTextColor={'gray'}
                   style={{
                     borderWidth: 1,
@@ -144,8 +129,8 @@ const EditProfile = ({route, navigation}: ScreenProps<'EditProfile'>) => {
                 <TextInput
                   onChangeText={handleChange('phone')}
                   onBlur={handleBlur('phone')}
-                  value={values.phone}
-                  placeholder={info.phone ? info.phone : 'phone'}                 
+                  value={String(values.phone)}
+                  placeholder={info.phone ? String(info.phone) : 'phone'}
                   placeholderTextColor={'gray'}
                   style={{
                     borderWidth: 1,

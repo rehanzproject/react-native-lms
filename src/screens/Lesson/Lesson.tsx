@@ -26,6 +26,7 @@ const Lesson = ({ route, navigation }: ScreenProps<'Lesson'>) => {
   const { getRequest } = useHTTP(token);
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any>();
+  const [videoError, setVideoError] = useState<boolean>(false);
 
   const getModules = async () => {
     try {
@@ -69,8 +70,11 @@ const Lesson = ({ route, navigation }: ScreenProps<'Lesson'>) => {
       <Video
         source={{ uri: data?.video }} // Replace with your video URL
         style={styles.video}
-        controls={true}
-        resizeMode="cover"
+        // controls={true}
+        fullscreen={true}
+        posterResizeMode="contain"
+        onError={() => setVideoError(true)}
+        onLoad={() => setVideoError(false)}
       />
       <Text style={styles.title}>Description</Text>
       <View style={styles.description}>
@@ -82,12 +86,18 @@ const Lesson = ({ route, navigation }: ScreenProps<'Lesson'>) => {
         </View>
         <Pressable
           onPress={() =>
+            !videoError &&
             navigation.navigate('Quiz', {
               id: route.params?.id ?? '',
               course_id: route.params?.course_id ?? '',
             })
           }
-          style={styles.quizButton}>
+          style={[
+            styles.quizButton,
+            videoError && styles.disabledButton,
+          ]}
+          disabled={videoError}
+        >
           <Text style={styles.quizButtonText}>Take Quiz</Text>
         </Pressable>
       </View>
@@ -145,6 +155,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: wd(10),
     paddingVertical: hd(1),
     borderRadius: wd(2),
+  },
+  disabledButton: {
+    backgroundColor: 'gray',
   },
   quizButtonText: {
     color: 'white',

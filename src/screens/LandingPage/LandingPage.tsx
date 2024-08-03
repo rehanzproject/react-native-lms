@@ -8,6 +8,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import axios from 'axios';
+import { useHTTP } from '../../hooks/useHTTP';
 
 const arrLanding = [
   {

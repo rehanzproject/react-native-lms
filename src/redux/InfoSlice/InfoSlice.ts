@@ -1,17 +1,15 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
- interface InfoState {
+interface InfoState {
   name: string;
   image: string;
-  nim: number
-  phone: number
+  phone: string;
 }
 
 const initialState: InfoState = {
   name: '',
   image: '',
-  nim: 0,
-  phone: 0
+  phone: '',
 };
 
 const infoSlice = createSlice({
@@ -21,15 +19,14 @@ const infoSlice = createSlice({
     updateInfo: (state, action: PayloadAction<InfoState>) => {
       state.name = action.payload.name;
       state.image = action.payload.image;
-      state.nim = action.payload.nim;
       state.phone = action.payload.phone;
-      
     },
     removeInfo: (state) => {
       state.name = '';
       state.image = '';
+      state.phone = '';
     },
   },
 });
 
-export default infoSlice
+export default infoSlice;

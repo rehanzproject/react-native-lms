@@ -91,7 +91,7 @@ function Home({ route, navigation }: ScreenProps<'Home'>) {
                   style={styles.logo}
                 />
                 <Text style={styles.welcomeText}>
-                  Welcome , {info.name ?? 'Kakak'}
+                  Welcome , {info.name || 'Kakak'}
                 </Text>
               </>
             )}

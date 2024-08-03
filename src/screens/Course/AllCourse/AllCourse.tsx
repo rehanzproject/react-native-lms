@@ -8,6 +8,9 @@ import {
   StyleSheet,
   ToastAndroid,
   RefreshControl,
+  NativeSyntheticEvent,
+  TextInputChangeEventData,
+  TextInputEndEditingEventData,
 } from 'react-native';
 import React, {useState} from 'react';
 import {CourseItem, ScreenProps} from '../../../types';
@@ -60,10 +63,24 @@ const AllCourse = ({navigation, route}: ScreenProps<'AllCourse'>) => {
       getSearch();
     }, [token]),
   );
-  const onSearch = (event) => {
-    navigation.navigate('AllCourse', {
-      search: event.nativeEvent.text,
-    });
+  const onSearch = async (event:NativeSyntheticEvent<TextInputEndEditingEventData>) => {
+    try {
+      setData({});
+     const result = await getRequest(
+        `/user/search/course?search=${event.nativeEvent.text}`,
+      );
+      if (!result?.data) {
+        ToastAndroid.show(result?.message as string, ToastAndroid.LONG);
+      } else {
+        setData(result?.data);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+   
   };
   const onRefresh = () => {
     setData({});
