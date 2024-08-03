@@ -140,7 +140,7 @@ function Register({navigation}: ScreenProps<'Register'>) {
                 onValueChange={(itemValue) =>
                   setFieldValue('prodi', itemValue)
                 }>
-                <Picker.Item label="Select Program Studi" value="" />
+                <Picker.Item label="Pilih Program Studi" value="" />
                 <Picker.Item
                   label="Teknik Informatika"
                   value="Teknik Informatika"
